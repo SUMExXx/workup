@@ -20,111 +20,81 @@ class _LoginScreenState extends State<LoginScreen> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Center(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 128, // Reduced width
-                            height: 128, // Reduced height
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/WorkUpLogo.png'),
-                                fit: BoxFit.contain, // Ensure the entire image is visible
-                              ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 128, // Reduced width
+                          height: 128, // Reduced height
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/WorkUpLogo.png'),
+                              fit: BoxFit.contain, // Ensure the entire image is visible
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            "Welcome to Work Up",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Welcome to Work Up",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Please enter your registration email and password',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFF2F2F2F),
+                            fontSize: 12,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w400,
+                            height: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildTextField(_emailController, 'Email or username'),
+                        const SizedBox(height: 20),
+                        _buildTextField(_passwordController, 'Password', obscureText: true),
+                        const SizedBox(height: 20),
+                        _buildElevatedButton('Continue'),
+                        const SizedBox(height: 20), // Adjusted height for spacing
+                        _buildSocialMediaOptions(),
+                        const SizedBox(height: 20),
+                        _buildRegisterRow(),
+                        const SizedBox(height: 20),
+                        _buildText('Are you a Service Provider?'),
+                        const SizedBox(height: 20),
+                        Container(
+                          width: 340,
+                          height: 36,
+                          padding: const EdgeInsets.all(10),
+                          clipBehavior: Clip.antiAlias,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFF86469C),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'Please enter your registration email and password',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFF2F2F2F),
-                              fontSize: 12,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              height: 1.5,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          _buildTextField(_emailController, 'Email or username'),
-                          const SizedBox(height: 20),
-                          _buildTextField(_passwordController, 'Password', obscureText: true),
-                          const SizedBox(height: 20),
-                          _buildElevatedButton('Continue'),
-                          const SizedBox(height: 20), // Adjusted height for spacing
-                          _buildSocialMediaOptions(),
-                          const SizedBox(height: 20),
-                          _buildRegisterRow(),
-                          const SizedBox(height: 20),
-                          _buildText('Are you a Service Provider?'),
-                          const SizedBox(height: 20),
-                          Container(
-                            width: 340,
-                            height: 36,
-                            padding: const EdgeInsets.all(10),
-                            clipBehavior: Clip.antiAlias,
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFF86469C),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Login as Service Provider',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w500,
-                                    height: 0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          const Row(
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                'Register',
-                                textAlign: TextAlign.center,
+                                'Login as Service Provider',
                                 style: TextStyle(
-                                  color: Color(0xFF86469C),
-                                  fontSize: 12,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w500,
-                                  height: 0,
-                                ),
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                'to become a Service Provider',
-                                style: TextStyle(
-                                  color: Color(0xFF2F2F2F),
+                                  color: Colors.white,
                                   fontSize: 12,
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w500,
@@ -133,16 +103,44 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 20), // Add spacing before forgot password
-                        ]
-                      ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Register',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFF86469C),
+                                fontSize: 12,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'to become a Service Provider',
+                              style: TextStyle(
+                                color: Color(0xFF2F2F2F),
+                                fontSize: 12,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20), // Add spacing before forgot password
+                      ]
                     ),
                   ),
                 ),
-                 // Add spacing before forgot password
-                _buildForgotPasswordAtBottom(), // Move to the bottom
-              ],
-            ),
+              ),
+               // Add spacing before forgot password
+              _buildForgotPasswordAtBottom(), // Move to the bottom
+            ],
           ),
         ),
       ),
@@ -333,24 +331,5 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-}
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Work Up',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const LoginScreen(),
-    );
   }
 }

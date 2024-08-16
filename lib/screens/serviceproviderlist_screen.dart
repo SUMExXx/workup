@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:workup/utils/colors.dart';
-import 'package:workup/utils/designStyles.dart';
+import 'package:workup/utils/design_styles.dart';
 import 'package:workup/utils/strings.dart';
-import 'package:workup/utils/textStyles.dart';
+import 'package:workup/utils/text_styles.dart';
 
 class ServiceProviderListScreen extends StatefulWidget {
   const ServiceProviderListScreen({super.key});
@@ -101,11 +100,11 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
       // }
 
       // For demonstration purposes, we'll just print a message
-      print('Content loaded successfully');
+      // print('Content loaded successfully');
     } catch (e) {
       // Handle exceptions and errors
-      print('Error loading content: $e');
-      throw e; // Rethrow the exception to let FutureBuilder handle it
+      // print('Error loading content: $e');
+      rethrow; // Rethrow the exception to let FutureBuilder handle it
     }
   }
 
@@ -184,7 +183,7 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
             } else{
               return Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
