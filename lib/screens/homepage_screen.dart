@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workup/utils/colors.dart';
 import 'package:workup/utils/strings.dart';
-import 'package:workup/utils/textStyles.dart';
+import 'package:workup/utils/text_styles.dart';
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({super.key});
@@ -99,11 +99,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
       // }
 
       // For demonstration purposes, we'll just print a message
-      print('Content loaded successfully');
+      // print('Content loaded successfully');
     } catch (e) {
       // Handle exceptions and errors
-      print('Error loading content: $e');
-      throw e; // Rethrow the exception to let FutureBuilder handle it
+      // print('Error loading content: $e');
+      rethrow; // Rethrow the exception to let FutureBuilder handle it
     }
   }
 
@@ -114,12 +114,10 @@ class _HomepageScreenState extends State<HomepageScreen> {
         key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: AppColors.primary,
-          title: Expanded(
-              child: Center(
-                  child: Text(
-                    AppStrings.appTitle,
-                    style: AppTextStyles.title.merge(AppTextStyles.textWhite),
-                  )
+          title: Center(
+              child: Text(
+                AppStrings.appTitle,
+                style: AppTextStyles.title.merge(AppTextStyles.textWhite),
               )
           ),
           leading: IconButton(
@@ -184,13 +182,13 @@ class _HomepageScreenState extends State<HomepageScreen> {
                   ),
                 ),
                 ListTile(
-                  title: Text('Item 1'),
+                  title: const Text('Item 1'),
                   onTap: () {
                     // Handle item 1 tap
                   },
                 ),
                 ListTile(
-                  title: Text('Item 2'),
+                  title: const Text('Item 2'),
                   onTap: () {
                     // Handle item 2 tap
                   },
@@ -208,30 +206,28 @@ class _HomepageScreenState extends State<HomepageScreen> {
             } else if(snapshot.hasError){
               return Center(child: Text('Error: ${snapshot.error}'));
             } else{
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3, // Number of columns in the grid
-                              crossAxisSpacing: 10.0, // Spacing between columns
-                              mainAxisSpacing: 10.0, // Spacing between rows
-                              childAspectRatio: 1.0, // Aspect ratio of each item
-                            ),
-                            itemCount: jsonData.length,
-                            itemBuilder: (context, index) {
-                              return categoryElement(jsonData[index]['imageURL']!, jsonData[index]['text']!, jsonData[index]['category']!);
-                            },
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3, // Number of columns in the grid
+                            crossAxisSpacing: 10.0, // Spacing between columns
+                            mainAxisSpacing: 10.0, // Spacing between rows
+                            childAspectRatio: 1.0, // Aspect ratio of each item
                           ),
+                          itemCount: jsonData.length,
+                          itemBuilder: (context, index) {
+                            return categoryElement(jsonData[index]['imageURL']!, jsonData[index]['text']!, jsonData[index]['category']!);
+                          },
                         ),
+                      ),
 
-                      ],
-                    ),
+                    ],
                   ),
                 ),
               );

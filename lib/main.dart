@@ -3,9 +3,43 @@ import 'package:flutter/services.dart';
 import 'package:workup/screens/homepage_screen.dart';
 import 'package:workup/screens/serviceproviderlist_screen.dart';
 import 'package:workup/screens/login_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Request permissions here
+  await requestAllPermissions();
   runApp(const MyApp());
+}
+
+Future<void> requestAllPermissions() async {
+  // Create a list of permissions to request
+  List<Permission> permissions = [
+    Permission.camera,
+    Permission.microphone,
+    Permission.location,
+    Permission.storage,
+    Permission.contacts,
+    Permission.phone,
+    Permission.sms,
+    // Add any other permissions you need
+  ];
+
+  // Request all permissions
+  Map<Permission, PermissionStatus> statuses = await permissions.request();
+
+  // Handle the permissions' statuses if needed
+  statuses.forEach((permission, status) {
+    if (status.isGranted) {
+      // print('${permission.toString()} granted');
+    } else if (status.isDenied) {
+      // print('${permission.toString()} denied');
+    } else if (status.isPermanentlyDenied) {
+      // The user permanently denied the permission, open app settings
+      openAppSettings();
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {
