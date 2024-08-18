@@ -3,11 +3,23 @@ import 'package:workup/utils/colors.dart';
 
 class AppTextStyles {
   static const TextStyle textWhite = TextStyle(
-    color: Colors.white
+    color: AppColors.white
+  );
+
+  static const TextStyle textBlack = TextStyle(
+      color: AppColors.black
   );
 
   static const TextStyle textPrimary = TextStyle(
       color: AppColors.primary
+  );
+
+  static const TextStyle textDarkGrey = TextStyle(
+      color: AppColors.darkGrey
+  );
+
+  static const TextStyle textMediumGrey = TextStyle(
+      color: AppColors.mediumGrey
   );
 
   static const TextStyle title = TextStyle(

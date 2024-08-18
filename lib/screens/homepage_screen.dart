@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:workup/utils/colors.dart';
 import 'package:workup/utils/strings.dart';
@@ -12,69 +14,70 @@ class HomepageScreen extends StatefulWidget {
 
 class _HomepageScreenState extends State<HomepageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late List<Category> categoryData;
 
-  List<Map<String, String>> jsonData = [
+  String jsonString = '''[
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician',
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-      'category': 'electrician'
-    },
-  ];
+        "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+        "text": "Electrician",
+        "category": "electrician"
+    }
+]''';
 
   handleMenuClick() {
     _scaffoldKey.currentState?.openDrawer();
@@ -86,6 +89,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   Future<void> fetchData() async {
     try {
+      List<dynamic> jsonData = jsonDecode(jsonString);
+      categoryData = jsonData.map((item) => Category.fromJson(item)).toList();
       // Simulate a network request delay
       await Future.delayed(const Duration(seconds: 3));
 
@@ -220,9 +225,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
                             mainAxisSpacing: 10.0, // Spacing between rows
                             childAspectRatio: 1.0, // Aspect ratio of each item
                           ),
-                          itemCount: jsonData.length,
+                          itemCount: categoryData.length,
                           itemBuilder: (context, index) {
-                            return categoryElement(jsonData[index]['imageURL']!, jsonData[index]['text']!, jsonData[index]['category']!);
+                            return categoryElement(categoryData[index].imageURL, categoryData[index].text, categoryData[index].category);
                           },
                         ),
                       ),
@@ -275,6 +280,27 @@ class _HomepageScreenState extends State<HomepageScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class Category{
+  final String imageURL;
+  final String text;
+  final String category;
+
+  Category({
+    required this.imageURL,
+    required this.text,
+    required this.category,
+  });
+
+  // Factory method to create a Service object from JSON
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+      imageURL: json['imageURL'],
+      text: json['text'],
+      category: json['category'],
     );
   }
 }

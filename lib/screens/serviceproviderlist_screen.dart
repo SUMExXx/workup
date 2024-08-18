@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:workup/utils/colors.dart';
 import 'package:workup/utils/design_styles.dart';
@@ -13,57 +14,114 @@ class ServiceProviderListScreen extends StatefulWidget {
 
 class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late List<ServiceProviderInfoBox> serviceProviderData;
+  late List<Subcategory> subcategoryData;
 
-  List<Map<String, String>> jsonData = [
+  String jsonString = '''[
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+      "sID": "suman",
+      "sName": "Suman Debnath",
+      "rating": 4.5,
+      "reviews": 20,
+      "newSProvider": true,
+      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+      "away": 3.5,
+      "startingPrice": 150,
+      "saved": true
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+      "sID": "suman",
+      "sName": "Aniket Bandi",
+      "rating": 4.5,
+      "reviews": 20,
+      "newSProvider": false,
+      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+      "away": 3.5,
+      "startingPrice": 150,
+      "saved": false
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+      "sID": "suman",
+      "sName": "Suman Debnath",
+      "rating": 4.5,
+      "reviews": 20,
+      "newSProvider": true,
+      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv chvch jbscjbc jascjc jascjc jscjc",
+      "away": 3.5,
+      "startingPrice": 150,
+      "saved": true
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+      "sID": "suman",
+      "sName": "Suman Debnath",
+      "rating": 4.5,
+      "reviews": 20,
+      "newSProvider": false,
+      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+      "away": 3.5,
+      "startingPrice": 150,
+      "saved": true
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+      "sID": "suman",
+      "sName": "Suman Debnath",
+      "rating": 4.5,
+      "reviews": 20,
+      "newSProvider": true,
+      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+      "away": 3.5,
+      "startingPrice": 150,
+      "saved": false
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+      "sID": "suman",
+      "sName": "Suman Debnath",
+      "rating": 4.5,
+      "reviews": 20,
+      "newSProvider": false,
+      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+      "away": 3.5,
+      "startingPrice": 150,
+      "saved": true
+    }
+  ]''';
+
+  String jsonString2 = '''[
+    {
+      "text": "Light",
+      "subcategory": "light"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "text": "Fan",
+      "subcategory": "fan"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "text": "Wiring",
+      "subcategory": "wiring"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "text": "Switch Board",
+      "subcategory": "switch_board"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "text": "Appliances",
+      "subcategory": "appliances"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
+      "text": "Light",
+      "subcategory": "light"
     },
     {
-      'imageURL': 'https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg',
-      'text': 'Electrician',
-    },
-  ];
+      "text": "Fan",
+      "subcategory": "fan"
+    }
+  ]''';
 
   handleBackClick() {
     Navigator.pop(context);
@@ -81,15 +139,27 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
 
   }
 
-  handleServiceProviderInfoBoxClick(String serviceProvider){
+  handleServiceProviderInfoBoxClick(String sID){
+
+  }
+
+  saveClickHandler(bool saved, String sID){
 
   }
 
   Future<void> fetchData() async {
     try {
+      //
+      // FETCH DATA HERE
+      //
       // Simulate a network request delay
-      await Future.delayed(const Duration(seconds: 3));
+      List<dynamic> jsonData2 = jsonDecode(jsonString2);
+      subcategoryData = jsonData2.map((item) => Subcategory.fromJson(item)).toList();
 
+      List<dynamic> jsonData = jsonDecode(jsonString);
+      serviceProviderData = jsonData.map((item) => ServiceProviderInfoBox.fromJson(item)).toList();
+
+      await Future.delayed(const Duration(seconds: 3));
       // Simulate fetching data
       // You can replace this with actual data-fetching logic
       // e.g., var response = await http.get('https://api.example.com/data');
@@ -115,12 +185,10 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
         key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: AppColors.primary,
-          title: Expanded(
-              child: Center(
-                  child: Text(
-                    AppStrings.appTitle,
-                    style: AppTextStyles.title.merge(AppTextStyles.textWhite),
-                  )
+          title: Center(
+              child: Text(
+                AppStrings.appTitle,
+                style: AppTextStyles.title.merge(AppTextStyles.textWhite),
               )
           ),
           leading: IconButton(
@@ -181,70 +249,70 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
             } else if(snapshot.hasError){
               return Center(child: Text('Error: ${snapshot.error}'));
             } else{
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Flexible(
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Flexible(
                               child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: List.generate(jsonData.length * 2 - 1, (index) {
-                                      if (index.isEven) {
-                                        int itemIndex = index ~/ 2;
-                                        return subcategoryButton(itemIndex);
-                                      } else {
-                                        return const SizedBox(width: 10.0); // Spacing between items
-                                      }
-                                    }),
-                                  )
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: List.generate(subcategoryData.length * 2 - 1, (index) {
+                                    if (index.isEven) {
+                                      int itemIndex = index ~/ 2;
+                                      return subcategoryButton(subcategoryData[itemIndex].text, subcategoryData[itemIndex].subcategory);
+                                    } else {
+                                      return const SizedBox(width: 10.0); // Spacing between items
+                                    }
+                                  }),
+                                )
                               ),
                             ),
-                            const SizedBox(width: 10.0),
-                            GestureDetector(
-                              onTap: handleFilterClick,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.white, // Background color of the container
-                                  borderRadius: BorderRadius.circular(10.0), // Radius for rounded corners
-                                  border: Border.all(
-                                    color: AppColors.grey, // Outline color
-                                    width: 1.0, // Outline width
-                                  ),
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
-                                  child: Center(
-                                      child: Icon(Icons.filter_list_rounded)
-                                  ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          GestureDetector(
+                            onTap: handleFilterClick,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.white, // Background color of the container
+                                borderRadius: BorderRadius.circular(10.0), // Radius for rounded corners
+                                border: Border.all(
+                                  color: AppColors.grey, // Outline color
+                                  width: 1.0, // Outline width
                                 ),
                               ),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
+                                child: Center(
+                                    child: Icon(Icons.filter_list_rounded)
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 10.0,),
+                      Flexible(
+                        child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Column(
+                              children: List.generate(serviceProviderData.length * 2 - 1, (index) {
+                                if (index.isEven) {
+                                  int itemIndex = index ~/ 2;
+                                  return serviceProviderInfoBox(serviceProviderData[itemIndex].imgURL, serviceProviderData[itemIndex].sID, serviceProviderData[itemIndex].sName, serviceProviderData[itemIndex].rating, serviceProviderData[itemIndex].reviews, serviceProviderData[itemIndex].newSProvider, serviceProviderData[itemIndex].info, serviceProviderData[itemIndex].away, serviceProviderData[itemIndex].startingPrice, serviceProviderData[itemIndex].saved);
+                                } else {
+                                  return const SizedBox(height: 20.0); // Spacing between items
+                                }
+                              }),
                             )
-                          ],
                         ),
-                        const SizedBox(height: 10.0,),
-                        Flexible(
-                          child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: Column(
-                                children: List.generate(jsonData.length * 2 - 1, (index) {
-                                  if (index.isEven) {
-                                    int itemIndex = index ~/ 2;
-                                    return serviceProviderInfoBox(itemIndex);
-                                  } else {
-                                    return const SizedBox(height: 20.0); // Spacing between items
-                                  }
-                                }),
-                              )
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
                 ),
               );
@@ -255,9 +323,9 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
     );
   }
 
-  Widget subcategoryButton(int itemIndex){
+  Widget subcategoryButton(String text, String subcategory){
     return GestureDetector(
-      onTap: handleSubcategoryClick(jsonData[itemIndex]['text']!),
+      onTap: handleSubcategoryClick(subcategory),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white, // Background color of the container
@@ -271,7 +339,7 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
           padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 10.0),
           child: Center(
               child: Text(
-                jsonData[itemIndex]['text']!,
+                text,
                 style: AppTextStyles.text2,
               )
           ),
@@ -280,9 +348,9 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
     );
   }
 
-  Widget serviceProviderInfoBox(int itemIndex){
+  Widget serviceProviderInfoBox(String imgURL, String sID, String sName, double rating, int reviews, bool newSProvider, String info, double away, int startingPrice, bool saved){
     return GestureDetector(
-      onTap: handleServiceProviderInfoBoxClick(jsonData[itemIndex]['text']!),
+      onTap: handleServiceProviderInfoBoxClick(sID),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white, // Background color of the container
@@ -291,19 +359,128 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
             AppShadowStyles.largeShadow
           ]
         ),
-        height: 90.0,
+        height: 110.0,
         child: Row(
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.horizontal(left: Radius.circular(10.0)),
               child: SizedBox(
                 width: 120.0,
-                height: 90.0,
+                height: 110.0,
                 child: FittedBox(
                   fit: BoxFit.cover,
-                    child: Image.network(jsonData[itemIndex]['imageURL']!)
+                    child: Image.network(imgURL)
                 ),
               ),
+            ),
+            Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      sName,
+                                      style: AppTextStyles.text2,
+                                    ),
+                                    const SizedBox(width: 4.0),
+                                    getNewTag(newSProvider)
+                                  ]
+                                ),
+                                const SizedBox(height: 2.0),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.star_rounded,
+                                      color: AppColors.primary,
+                                      size: 16.0,
+                                    ),
+                                    const SizedBox(width: 4.0),
+                                    Text(
+                                        rating.toString(),
+                                      style: AppTextStyles.text2.merge(AppTextStyles.textPrimary),
+                                    ),
+                                    const SizedBox(width: 4.0),
+                                    Text(
+                                      '(${rating.toString()})',
+                                      style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                            const Spacer(),
+                            getSaveIcon(saved, sID)
+                          ],
+                        ),
+                        const SizedBox(height: 2.0),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                  info,
+                                style: AppTextStyles.textSmall.merge(AppTextStyles.textMediumGrey),
+                                maxLines: 2, // Limit the text to two lines
+                                overflow: TextOverflow.ellipsis, // Show "..." at the end if the text exceeds
+                                softWrap: true,
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 2.0),
+                        Row(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  AppStrings.away,
+                                  style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
+                                ),
+                                const SizedBox(width: 2.0),
+                                Text(
+                                  away.toString(),
+                                  style: AppTextStyles.text2.merge(AppTextStyles.textDarkGrey),
+                                ),
+                                const SizedBox(width: 2.0),
+                                Text(
+                                  AppStrings.km,
+                                  style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  AppStrings.away,
+                                  style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
+                                ),
+                                const SizedBox(width: 2.0),
+                                Text(
+                                  '₹ ${startingPrice.toString()}',
+                                  style: AppTextStyles.text2.merge(AppTextStyles.textDarkGrey),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                )
             )
           ],
         )
@@ -311,19 +488,103 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
     );
   }
 
-  Widget categoryElement(String imageURL, String text) {
-    return GestureDetector(
-      onTap: (){
-        Navigator.pushReplacementNamed(
-            context,
-            '/',
-          // arguments: {
-          //     'category': category
-          // }
-        );
-      },
-      child: Container()
+  getNewTag(bool newSProvider){
+    if(newSProvider){
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        decoration: ShapeDecoration(
+          color: AppColors.primary,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        ),
+        child: Center(
+          child: Text(
+              AppStrings.newSeller,
+              style: AppTextStyles.textSmallBold.merge(AppTextStyles.textWhite)
+          ),
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  getSaveIcon(bool saved, String sID){
+    if(saved){
+      return IconButton(
+          onPressed: saveClickHandler(saved, sID),
+          icon: const Icon(
+            Icons.bookmark_rounded,
+            color: AppColors.mediumGrey,
+          )
+      );
+    } else {
+      return IconButton(
+          onPressed: saveClickHandler(saved, sID),
+          icon: const Icon(
+            Icons.bookmark_add_outlined,
+            color: AppColors.mediumGrey,
+          )
+      );
+    }
+  }
+}
+
+class Subcategory{
+  final String text;
+  final String subcategory;
+
+  Subcategory({
+    required this.text,
+    required this.subcategory
+  });
+
+  // Factory method to create a Service object from JSON
+  factory Subcategory.fromJson(Map<String, dynamic> json) {
+    return Subcategory(
+      text: json['text'],
+      subcategory: json['subcategory'],
     );
   }
 }
 
+class ServiceProviderInfoBox{
+  final String imgURL;
+  final String sID;
+  final String sName;
+  final double rating;
+  final int reviews;
+  final bool newSProvider;
+  final String info;
+  final double away;
+  final int startingPrice;
+  final bool saved;
+
+  ServiceProviderInfoBox({
+    required this.imgURL,
+    required this.sID,
+    required this.sName,
+    required this.rating,
+    required this.reviews,
+    required this.newSProvider,
+    required this.info,
+    required this.away,
+    required this.startingPrice,
+    required this.saved
+  });
+
+  // Factory method to create a Service object from JSON
+  factory ServiceProviderInfoBox.fromJson(Map<String, dynamic> json) {
+    return ServiceProviderInfoBox(
+      imgURL: json['imgURL'],
+      sID: json['sID'],
+      sName: json['sName'],
+      rating: json['rating'].toDouble(),
+      reviews: json['reviews'],
+      newSProvider: json['newSProvider'],
+      info: json['info'],
+      away: json['away'].toDouble(),
+      startingPrice: json['startingPrice'],
+      saved: json['saved'],
+    );
+  }
+}
