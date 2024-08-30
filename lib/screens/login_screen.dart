@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:workup/models/customer_model.dart';
+import 'package:workup/utils/secure_storage.dart';
+
+import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,9 +14,55 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
   continueButtonClick(){
-    Navigator.pushReplacementNamed(context, '/homepageScreen');
+    // Navigator.pushReplacementNamed(context, '/homepageScreen');
+    _login();
+  }
+
+  Future<void> _login() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    final customer = Customer(email: email, password: password);
+    final response = await _authService.login(customer);
+
+    switch (response['code']) {
+      case 'Error':
+      // Statements for value1
+        break;
+      case 'InvalidEmail':
+      // Statements for value2
+        break;
+      case 'InvalidPassword':
+      // Statements for value2
+        break;
+      case 'Success':
+        await saveToken(response['token']);
+        await saveEmail(email);
+        await savePassword(password);
+        Navigator.pushReplacementNamed(context, '/homepageScreen');
+        break;
+    // Add more cases as needed
+      default:
+      // Default statements if no cases match
+    }
+  }
+
+  Future<void> _checkLogin() async {
+    var token = await getToken();
+    var email = await getEmail();
+    var loginState = await _authService.verifyLogin(email!, token!);
+    if (loginState!) {
+      Navigator.pushReplacementNamed(context, '/homepageScreen');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLogin();
   }
 
   @override
