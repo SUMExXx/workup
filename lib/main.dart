@@ -4,8 +4,10 @@ import 'package:workup/screens/homepage_screen.dart';
 import 'package:workup/screens/serviceproviderlist_screen.dart';
 import 'package:workup/screens/login_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
 
   // Request permissions here
