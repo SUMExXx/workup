@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:workup/models/customer_model.dart';
 import 'package:workup/utils/secure_storage.dart';
