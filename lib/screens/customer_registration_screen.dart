@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:workup/models/customer_model.dart';
 
 import 'package:workup/utils/colors.dart';
-import 'package:workup/utils/design_styles.dart';
 import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
+import '../services/auth_service.dart';
 
 class CustomerRegisterScreen extends StatefulWidget {
   const CustomerRegisterScreen({super.key});
@@ -15,10 +16,44 @@ class CustomerRegisterScreen extends StatefulWidget {
 class _CustomerRegistrationScreenState extends State<CustomerRegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
 
-  continueButtonClick(){
-    Navigator.pushNamed(context, '/customerOtpScreen');
+  registerButtonClick(){
+    _register();
   }
+
+  Future<void> _register() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    final customer = Customer(email: email, password: password);
+    final response = await _authService.register(customer);
+
+    switch (response) {
+      case 400:
+      // Statements for value1
+        break;
+      case 401:
+      // Statements for value2
+        break;
+      case 402:
+      // Statements for value2
+        break;
+      case 200:
+        Navigator.pushNamed(
+            context,
+            '/customerOtpScreen',
+            arguments: {
+              'email': email,
+            }
+        );
+        break;
+    // Add more cases as needed
+      default:
+      // Default statements if no cases match
+    }
+  }
+
   handleBackClick() {
     Navigator.pop(context);
   }
@@ -42,7 +77,7 @@ class _CustomerRegistrationScreenState extends State<CustomerRegisterScreen> {
             ),
             onPressed: handleBackClick,
           ),
-          actions: [
+          actions: const [
             SizedBox(width: 48.0, height: 48.0,),
           ],
         ),
@@ -62,7 +97,7 @@ class _CustomerRegistrationScreenState extends State<CustomerRegisterScreen> {
                             height: 128, // Reduced height
                             decoration: const BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/workup logo.jpg'),
+                                image: AssetImage('assets/images/WorkUpLogo.png'),
                                 fit: BoxFit.contain, // Ensure the entire image is visible
                               ),
                             ),
@@ -73,6 +108,7 @@ class _CustomerRegistrationScreenState extends State<CustomerRegisterScreen> {
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20,
+                              fontFamily: 'Inter',
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -153,7 +189,7 @@ class _CustomerRegistrationScreenState extends State<CustomerRegisterScreen> {
             borderRadius: BorderRadius.circular(6),
           ),
         ),
-        onPressed: continueButtonClick,
+        onPressed: registerButtonClick,
         child: Text(
           text,
           style: const TextStyle(

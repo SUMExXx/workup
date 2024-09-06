@@ -6,14 +6,25 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthService {
   final String? apiUrl = dotenv.env['API_BASE_URL'];
 
-  Future<bool> register(Customer customer) async {
+  Future<int> register(Customer customer) async {
     final response = await http.post(
       Uri.parse('$apiUrl/customers/register'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(customer.toJson()),
     );
 
-    return response.statusCode == 200;  // Return true if registration is successful
+    return response.statusCode;  // Return true if registration is successful
+  }
+
+  Future<int> verifyOTP(String email, String otp) async {
+
+    final response = await http.post(
+      Uri.parse('$apiUrl/customers/verify'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({"email": email, "otp": otp}),
+    );
+
+    return response.statusCode;  // Return true if registration is successful
   }
 
   Future<Map<String, dynamic>> login(Customer customer) async {
