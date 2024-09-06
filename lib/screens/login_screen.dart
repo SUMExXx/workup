@@ -20,6 +20,9 @@ class _LoginScreenState extends State<LoginScreen> {
     // Navigator.pushReplacementNamed(context, '/homepageScreen');
     _login();
   }
+  registerCustomer(){
+    Navigator.pushNamed(context, '/customerRegistrationScreen');
+  }
 
   Future<void> _login() async {
     final email = _emailController.text;
@@ -347,10 +350,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildRegisterRow() {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           'Don\'t have an account?',
           style: TextStyle(
             color: Color(0xFF2F2F2F),
@@ -360,16 +363,19 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 0,
           ),
         ),
-        SizedBox(width: 8),
-        Text(
-          'Register',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Color(0xFF86469C),
-            fontSize: 12,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w500,
-            height: 0,
+        const SizedBox(width: 8),
+        TextButton(
+          onPressed: registerCustomer,
+          child: const Text(
+            'Register',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Color(0xFF86469C),
+              fontSize: 12,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w500,
+              height: 0,
+            ),
           ),
         ),
       ],
