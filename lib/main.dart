@@ -6,6 +6,10 @@ import 'package:workup/screens/login_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:workup/screens/customer_registration_screen.dart';
+import 'package:workup/screens/customer_registration_otp_screen.dart';
+
+
 void main() async {
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,6 +68,10 @@ class MyApp extends StatelessWidget {
         '/loginScreen': (context) => const LoginScreen(),
         '/homepageScreen': (context) => const HomepageScreen(),
         '/serviceProviderListScreen' : (context) => const ServiceProviderListScreen(),
+        '/customerRegistrationScreen': (context) => const CustomerRegisterScreen(),
+        '/customerOtpScreen': (context) => const CustomerRegistrationOtpScreen(),
+
+
       },
       title: 'Flutter Demo',
       theme: ThemeData(
