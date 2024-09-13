@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:workup/screens/customer_registration_screen.dart';
 import 'package:workup/screens/customer_registration_otp_screen.dart';
+import 'package:workup/screens/serviceprovider_fullprofile_screen.dart';
 
 
 void main() async {
@@ -70,7 +71,7 @@ class MyApp extends StatelessWidget {
         '/serviceProviderListScreen' : (context) => const ServiceProviderListScreen(),
         '/customerRegistrationScreen': (context) => const CustomerRegisterScreen(),
         '/customerOtpScreen': (context) => const CustomerRegistrationOtpScreen(),
-
+        '/serviceProviderFullProfileScreen' : (context) => const ServiceProviderFullProfileScreen(),
 
       },
       title: 'Flutter Demo',
