@@ -140,7 +140,11 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
   }
 
   handleServiceProviderInfoBoxClick(String sID){
-
+    Navigator.pushNamed(
+      context,
+      '/serviceProviderFullProfileScreen',
+      arguments: sID
+    );
   }
 
   saveClickHandler(bool saved, String sID){
@@ -211,11 +215,11 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
         bottomNavigationBar: BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(
-                icon: Icon(Icons.home_rounded),
-                label: AppStrings.home
+              icon: Icon(Icons.home_rounded),
+              label: AppStrings.home
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.groups_rounded),
+              icon: Icon(Icons.groups_rounded),
                 label: AppStrings.bidding
             ),
             BottomNavigationBarItem(
@@ -240,95 +244,82 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
         ),
         resizeToAvoidBottomInset: false,
         body: FutureBuilder(
-            future: fetchData(),
-            builder: (context, snapshot){
-              if(snapshot.connectionState == ConnectionState.waiting){
-                return const Center(child: CircularProgressIndicator(
-                  color: AppColors.primary,
-                ));
-              } else if(snapshot.hasError){
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else{
-                return Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Flexible(
-                                child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: List.generate(subcategoryData.length * 2 - 1, (index) {
-                                        if (index.isEven) {
-                                          int itemIndex = index ~/ 2;
-                                          return subcategoryButton(subcategoryData[itemIndex].text, subcategoryData[itemIndex].subcategory);
-                                        } else {
-                                          return const SizedBox(width: 10.0); // Spacing between items
-                                        }
-                                      }),
-                                    )
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10.0),
-                            GestureDetector(
-                              onTap: handleFilterClick,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.white, // Background color of the container
-                                  borderRadius: BorderRadius.circular(10.0), // Radius for rounded corners
-                                  border: Border.all(
-                                    color: AppColors.grey, // Outline color
-                                    width: 1.0, // Outline width
-                                  ),
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
-                                  child: Center(
-                                      child: Icon(Icons.filter_list_rounded)
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 10.0,),
-                        Flexible(
-                          child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: Column(
-                                children: List.generate(serviceProviderData.length * 2 - 1, (index) {
+          future: fetchData(),
+          builder: (context, snapshot){
+            if(snapshot.connectionState == ConnectionState.waiting){
+              return const Center(child: CircularProgressIndicator(
+                color: AppColors.primary,
+              ));
+            } else if(snapshot.hasError){
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else{
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: List.generate(subcategoryData.length * 2 - 1, (index) {
                                   if (index.isEven) {
                                     int itemIndex = index ~/ 2;
-                                    return GestureDetector(
-                                      onTap: (){
-                                        Navigator.pushNamed(
-                                            context,
-                                            '/serviceProviderFullProfileScreen',
-                                            arguments: serviceProviderData[itemIndex].sID
-                                        );
-                                      },
-                                        child: serviceProviderInfoBox(serviceProviderData[itemIndex].imgURL, serviceProviderData[itemIndex].sID, serviceProviderData[itemIndex].sName, serviceProviderData[itemIndex].rating, serviceProviderData[itemIndex].reviews, serviceProviderData[itemIndex].newSProvider, serviceProviderData[itemIndex].info, serviceProviderData[itemIndex].away, serviceProviderData[itemIndex].startingPrice, serviceProviderData[itemIndex].saved)
-                                    );
-                                  }
-
-                                  else {
-                                    return const SizedBox(height: 20.0); // Spacing between items
+                                    return subcategoryButton(subcategoryData[itemIndex].text, subcategoryData[itemIndex].subcategory);
+                                  } else {
+                                    return const SizedBox(width: 10.0); // Spacing between items
                                   }
                                 }),
                               )
+                            ),
                           ),
-                        )
-                      ],
-                    ),
+                          const SizedBox(width: 10.0),
+                          GestureDetector(
+                            onTap: handleFilterClick,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.white, // Background color of the container
+                                borderRadius: BorderRadius.circular(10.0), // Radius for rounded corners
+                                border: Border.all(
+                                  color: AppColors.grey, // Outline color
+                                  width: 1.0, // Outline width
+                                ),
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
+                                child: Center(
+                                    child: Icon(Icons.filter_list_rounded)
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 10.0,),
+                      Flexible(
+                        child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Column(
+                              children: List.generate(serviceProviderData.length * 2 - 1, (index) {
+                                if (index.isEven) {
+                                  int itemIndex = index ~/ 2;
+                                  return serviceProviderInfoBox(serviceProviderData[itemIndex].imgURL, serviceProviderData[itemIndex].sID, serviceProviderData[itemIndex].sName, serviceProviderData[itemIndex].rating, serviceProviderData[itemIndex].reviews, serviceProviderData[itemIndex].newSProvider, serviceProviderData[itemIndex].info, serviceProviderData[itemIndex].away, serviceProviderData[itemIndex].startingPrice, serviceProviderData[itemIndex].saved);
+                                } else {
+                                  return const SizedBox(height: 20.0); // Spacing between items
+                                }
+                              }),
+                            )
+                        ),
+                      )
+                    ],
                   ),
-                );
-              }
+                ),
+              );
             }
+          }
         ),
       ),
     );
@@ -361,140 +352,142 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
 
   Widget serviceProviderInfoBox(String imgURL, String sID, String sName, double rating, int reviews, bool newSProvider, String info, double away, int startingPrice, bool saved){
     return GestureDetector(
-      onTap: handleServiceProviderInfoBoxClick(sID),
+      onTap: (){
+        handleServiceProviderInfoBoxClick(sID);
+      },
       child: Container(
-          decoration: BoxDecoration(
-              color: AppColors.white, // Background color of the container
-              borderRadius: BorderRadius.circular(10.0), // Radius for rounded corners
-              boxShadow: const [
-                AppShadowStyles.largeShadow
-              ]
-          ),
-          height: 110.0,
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.horizontal(left: Radius.circular(10.0)),
-                child: SizedBox(
-                  width: 120.0,
-                  height: 110.0,
-                  child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: Image.network(imgURL)
-                  ),
+        decoration: BoxDecoration(
+          color: AppColors.white, // Background color of the container
+          borderRadius: BorderRadius.circular(10.0), // Radius for rounded corners
+          boxShadow: const [
+            AppShadowStyles.largeShadow
+          ]
+        ),
+        height: 110.0,
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.horizontal(left: Radius.circular(10.0)),
+              child: SizedBox(
+                width: 120.0,
+                height: 110.0,
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                    child: Image.network(imgURL)
                 ),
               ),
-              Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                      children: [
-                                        Text(
-                                          sName,
-                                          style: AppTextStyles.text2,
-                                        ),
-                                        const SizedBox(width: 4.0),
-                                        getNewTag(newSProvider)
-                                      ]
-                                  ),
-                                  const SizedBox(height: 2.0),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.star_rounded,
-                                        color: AppColors.primary,
-                                        size: 16.0,
-                                      ),
-                                      const SizedBox(width: 4.0),
-                                      Text(
-                                        rating.toString(),
-                                        style: AppTextStyles.text2.merge(AppTextStyles.textPrimary),
-                                      ),
-                                      const SizedBox(width: 4.0),
-                                      Text(
-                                        '(${rating.toString()})',
-                                        style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              const Spacer(),
-                              getSaveIcon(saved, sID)
-                            ],
-                          ),
-                          const SizedBox(height: 2.0),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  info,
-                                  style: AppTextStyles.textSmall.merge(AppTextStyles.textMediumGrey),
-                                  maxLines: 2, // Limit the text to two lines
-                                  overflow: TextOverflow.ellipsis, // Show "..." at the end if the text exceeds
-                                  softWrap: true,
+            ),
+            Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      sName,
+                                      style: AppTextStyles.text2,
+                                    ),
+                                    const SizedBox(width: 4.0),
+                                    getNewTag(newSProvider)
+                                  ]
                                 ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 2.0),
-                          Row(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    AppStrings.away,
-                                    style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
-                                  ),
-                                  const SizedBox(width: 2.0),
-                                  Text(
-                                    away.toString(),
-                                    style: AppTextStyles.text2.merge(AppTextStyles.textDarkGrey),
-                                  ),
-                                  const SizedBox(width: 2.0),
-                                  Text(
-                                    AppStrings.km,
-                                    style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
-                                  ),
-                                ],
+                                const SizedBox(height: 2.0),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.star_rounded,
+                                      color: AppColors.primary,
+                                      size: 16.0,
+                                    ),
+                                    const SizedBox(width: 4.0),
+                                    Text(
+                                        rating.toString(),
+                                      style: AppTextStyles.text2.merge(AppTextStyles.textPrimary),
+                                    ),
+                                    const SizedBox(width: 4.0),
+                                    Text(
+                                      '(${rating.toString()})',
+                                      style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                            const Spacer(),
+                            getSaveIcon(saved, sID)
+                          ],
+                        ),
+                        const SizedBox(height: 2.0),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                  info,
+                                style: AppTextStyles.textSmall.merge(AppTextStyles.textMediumGrey),
+                                maxLines: 2, // Limit the text to two lines
+                                overflow: TextOverflow.ellipsis, // Show "..." at the end if the text exceeds
+                                softWrap: true,
                               ),
-                              const Spacer(),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    AppStrings.away,
-                                    style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
-                                  ),
-                                  const SizedBox(width: 2.0),
-                                  Text(
-                                    '₹ ${startingPrice.toString()}',
-                                    style: AppTextStyles.text2.merge(AppTextStyles.textDarkGrey),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 2.0),
+                        Row(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  AppStrings.away,
+                                  style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
+                                ),
+                                const SizedBox(width: 2.0),
+                                Text(
+                                  away.toString(),
+                                  style: AppTextStyles.text2.merge(AppTextStyles.textDarkGrey),
+                                ),
+                                const SizedBox(width: 2.0),
+                                Text(
+                                  AppStrings.km,
+                                  style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  AppStrings.away,
+                                  style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
+                                ),
+                                const SizedBox(width: 2.0),
+                                Text(
+                                  '₹ ${startingPrice.toString()}',
+                                  style: AppTextStyles.text2.merge(AppTextStyles.textDarkGrey),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      ],
                     ),
-                  )
-              )
-            ],
-          )
+                  ),
+                )
+            )
+          ],
+        )
       ),
     );
   }
