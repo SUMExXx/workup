@@ -5,4 +5,10 @@ class AppStrings {
   static const String newSeller = "NEW";
   static const String away = "Away";
   static const String km = "KM";
+  static const String bio = "BIO";
+  static const String orders = "ORDERS";
+  static const String featured = "FEATURED";
+  static const String languages = "LANGUAGES";
+  static const String reviews = "REVIEWS";
+
 }
