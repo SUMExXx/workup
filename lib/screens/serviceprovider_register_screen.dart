@@ -65,6 +65,25 @@ class _ServiceProviderRegisterScreenState extends State<ServiceProviderRegisterS
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: AppColors.primary,
+          title: Center(
+              child: Text(
+                AppStrings.appTitle,
+                style: AppTextStyles.title.merge(AppTextStyles.textWhite),
+              )
+          ),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: AppColors.white,
+            ),
+            onPressed: handleBackClick,
+          ),
+          actions: const [
+            SizedBox(width: 48.0, height: 48.0,),
+          ],
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:workup/models/service_provider_model.dart';  // Import ServiceProvider model
+import 'package:workup/utils/colors.dart';
+import 'package:workup/utils/strings.dart';
+import 'package:workup/utils/text_styles.dart';
 import '../services/auth_service.dart';
 
 
@@ -62,6 +65,25 @@ class _ServiceProviderLoginState extends State<ServiceProviderLoginScreen> {
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: AppColors.primary,
+          title: Center(
+              child: Text(
+                AppStrings.appTitle,
+                style: AppTextStyles.title.merge(AppTextStyles.textWhite),
+              )
+          ),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: AppColors.white,
+            ),
+            onPressed: handleBackClick,
+          ),
+          actions: const [
+            SizedBox(width: 48.0, height: 48.0,),
+          ],
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
