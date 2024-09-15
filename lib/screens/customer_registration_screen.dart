@@ -57,6 +57,7 @@ class _CustomerRegistrationScreenState extends State<CustomerRegisterScreen> {
   handleBackClick() {
     Navigator.pop(context);
   }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
