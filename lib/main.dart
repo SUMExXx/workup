@@ -6,6 +6,10 @@ import 'package:workup/screens/login_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:workup/screens/serviceprovider_otp_screen.dart';
+import 'package:workup/screens/serviceprovider_register_screen.dart';
+import 'package:workup/screens/serviceprovider_login_screen.dart';
+
 import 'package:workup/screens/customer_registration_screen.dart';
 import 'package:workup/screens/customer_registration_otp_screen.dart';
 import 'package:workup/screens/serviceprovider_fullprofile_screen.dart';
@@ -63,7 +67,7 @@ class MyApp extends StatelessWidget {
     ));
 
     return MaterialApp(
-      initialRoute: '/',
+      initialRoute: '/loginScreen',
       routes: {
         // '/': (context) => const LoginScreen(),
         '/loginScreen': (context) => const LoginScreen(),
@@ -71,6 +75,9 @@ class MyApp extends StatelessWidget {
         '/serviceProviderListScreen' : (context) => const ServiceProviderListScreen(),
         '/customerRegistrationScreen': (context) => const CustomerRegisterScreen(),
         '/customerOtpScreen': (context) => const CustomerRegistrationOtpScreen(),
+        '/serviceProviderRegisterScreen': (context) => const ServiceProviderRegisterScreen(),
+        '/serviceProviderOtpScreen': (context) => const ServiceProviderOtpScreen(),
+        '/serviceProviderLoginScreen': (context) => const ServiceProviderLoginScreen(),
         '/serviceProviderFullProfileScreen' : (context) => const ServiceProviderFullProfileScreen(),
 
       },
