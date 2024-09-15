@@ -140,7 +140,11 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
   }
 
   handleServiceProviderInfoBoxClick(String sID){
-
+    Navigator.pushNamed(
+      context,
+      '/serviceProviderFullProfileScreen',
+      arguments: sID
+    );
   }
 
   saveClickHandler(bool saved, String sID){
@@ -258,20 +262,18 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: Flexible(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: List.generate(subcategoryData.length * 2 - 1, (index) {
-                                    if (index.isEven) {
-                                      int itemIndex = index ~/ 2;
-                                      return subcategoryButton(subcategoryData[itemIndex].text, subcategoryData[itemIndex].subcategory);
-                                    } else {
-                                      return const SizedBox(width: 10.0); // Spacing between items
-                                    }
-                                  }),
-                                )
-                              ),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: List.generate(subcategoryData.length * 2 - 1, (index) {
+                                  if (index.isEven) {
+                                    int itemIndex = index ~/ 2;
+                                    return subcategoryButton(subcategoryData[itemIndex].text, subcategoryData[itemIndex].subcategory);
+                                  } else {
+                                    return const SizedBox(width: 10.0); // Spacing between items
+                                  }
+                                }),
+                              )
                             ),
                           ),
                           const SizedBox(width: 10.0),
@@ -350,7 +352,9 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
 
   Widget serviceProviderInfoBox(String imgURL, String sID, String sName, double rating, int reviews, bool newSProvider, String info, double away, int startingPrice, bool saved){
     return GestureDetector(
-      onTap: handleServiceProviderInfoBoxClick(sID),
+      onTap: (){
+        handleServiceProviderInfoBoxClick(sID);
+      },
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white, // Background color of the container

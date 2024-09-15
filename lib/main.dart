@@ -12,6 +12,7 @@ import 'package:workup/screens/serviceprovider_login_screen.dart';
 
 import 'package:workup/screens/customer_registration_screen.dart';
 import 'package:workup/screens/customer_registration_otp_screen.dart';
+import 'package:workup/screens/serviceprovider_fullprofile_screen.dart';
 
 
 void main() async {
@@ -77,6 +78,7 @@ class MyApp extends StatelessWidget {
         '/serviceProviderRegisterScreen': (context) => const ServiceProviderRegisterScreen(),
         '/serviceProviderOtpScreen': (context) => const ServiceProviderOtpScreen(),
         '/serviceProviderLoginScreen': (context) => const ServiceProviderLoginScreen(),
+        '/serviceProviderFullProfileScreen' : (context) => const ServiceProviderFullProfileScreen(),
 
       },
       title: 'Flutter Demo',
