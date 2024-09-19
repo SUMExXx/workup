@@ -142,8 +142,10 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
   handleServiceProviderInfoBoxClick(String sID){
     Navigator.pushNamed(
       context,
-      '/serviceProviderFullProfileScreen',
-      arguments: sID
+      '/serviceProviderProfileScreen',
+      arguments: {
+        "sID": sID
+      }
     );
   }
 
@@ -514,12 +516,15 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
 
   getSaveIcon(bool saved, String sID){
     if(saved){
-      return IconButton(
-          onPressed: saveClickHandler(saved, sID),
-          icon: const Icon(
-            Icons.bookmark_rounded,
-            color: AppColors.mediumGrey,
-          )
+      return AbsorbPointer(
+        absorbing: true,
+        child: IconButton(
+            onPressed: saveClickHandler(saved, sID),
+            icon: const Icon(
+              Icons.bookmark_rounded,
+              color: AppColors.mediumGrey,
+            )
+        ),
       );
     } else {
       return IconButton(
