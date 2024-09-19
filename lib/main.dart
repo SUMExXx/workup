@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workup/screens/homepage_screen.dart';
+import 'package:workup/screens/serviceprovider_profile_screen.dart';
 import 'package:workup/screens/serviceproviderlist_screen.dart';
 import 'package:workup/screens/login_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -78,7 +79,8 @@ class MyApp extends StatelessWidget {
         '/serviceProviderRegisterScreen': (context) => const ServiceProviderRegisterScreen(),
         '/serviceProviderOtpScreen': (context) => const ServiceProviderOtpScreen(),
         '/serviceProviderLoginScreen': (context) => const ServiceProviderLoginScreen(),
-        '/serviceProviderFullProfileScreen' : (context) => const ServiceProviderFullProfileScreen(),
+        '/serviceProviderFullProfileScreen': (context) => const ServiceProviderFullProfileScreen(),
+        '/serviceProviderProfileScreen': (context) => const ServiceProviderProfileScreen()
 
       },
       title: 'Flutter Demo',
