@@ -5,6 +5,8 @@ import 'package:workup/utils/colors.dart';
 import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:workup/widgets/bottom_navigation_bar.dart';
+import 'package:workup/widgets/drawer.dart';
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({super.key});
@@ -163,65 +165,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
             )
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.groups_rounded),
-                label: AppStrings.bidding
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.search_rounded),
-                label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.assignment_rounded),
-                label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle_rounded),
-                label: AppStrings.home
-            ),
-          ],
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          selectedItemColor: AppColors.white,
-          unselectedItemColor: AppColors.tertiary,
-          backgroundColor: AppColors.primary,
-          type: BottomNavigationBarType.fixed,
-        ),
+        bottomNavigationBar: const CustomBottomNavigationBar(),
         resizeToAvoidBottomInset: false,
-        drawer: Drawer(
-          child: ListView(
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerHeader(
-                  decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                  ),
-                  child: Text(
-                    'Drawer Header',
-                    style: AppTextStyles.heading2.merge(AppTextStyles.textWhite),
-                  ),
-                ),
-                ListTile(
-                  title: const Text('Item 1'),
-                  onTap: () {
-                    // Handle item 1 tap
-                  },
-                ),
-                ListTile(
-                  title: const Text('Item 2'),
-                  onTap: () {
-                    // Handle item 2 tap
-                  },
-                ),
-              ],
-            ),
-          ),
+        drawer: const CustomDrawer(),
         body: FutureBuilder(
           future: fetchData(),
           builder: (context, snapshot){

@@ -1,9 +1,14 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:workup/screens/customer_edit_profile_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 import 'package:workup/utils/colors.dart';
+import 'package:workup/utils/design_styles.dart';
+import 'package:workup/utils/secure_storage.dart';
 import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:workup/widgets/bottom_navigation_bar.dart';
+import 'package:workup/widgets/drawer.dart';
 
 class CustomerProfileScreen extends StatefulWidget {
   const CustomerProfileScreen({super.key});
@@ -14,55 +19,150 @@ class CustomerProfileScreen extends StatefulWidget {
 
 class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  CustomerInfo? customerData; // Nullable type
-  bool isLoading = true; // State to manage loading
+  late ServiceProviderInfo serviceProviderData;
+  final String? apiUrl = dotenv.env['API_BASE_URL'];
 
-  String? cID;
-  String jsonString = '''
+  String? sID;
+
+  String jsonString = "";
+  late Map<String,dynamic> jsonData;
+
+  String jsonString2 = '''[
     {
-      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-      "cID": "ramesh",
-      "cName": "Ramesh Ram",
-      "rating": 4.5,
-      "newCustomer": true
-    }''';
+      "name": "Light",
+      "tasks": [
+        {
+          "task_name": "Light replacement",
+          "price": 100
+        },
+        {
+          "task_name": "Light installation",
+          "price": 80
+        }
+      ]
+    },
+    {
+      "name": "Light",
+      "tasks": [
+        {
+          "task_name": "Light replacement",
+          "price": 100
+        },
+        {
+          "task_name": "Light installation",
+          "price": 80
+        }
+      ]
+    },
+    {
+      "name": "Light",
+      "tasks": [
+        {
+          "task_name": "Light replacement",
+          "price": 100
+        },
+        {
+          "task_name": "Light installation",
+          "price": 80
+        }
+      ]
+    },
+    {
+      "name": "Light",
+      "tasks": [
+        {
+          "task_name": "Light replacement",
+          "price": 100
+        },
+        {
+          "task_name": "Light installation",
+          "price": 80
+        }
+      ]
+    },
+    {
+      "name": "Light",
+      "tasks": [
+        {
+          "task_name": "Light replacement",
+          "price": 100
+        },
+        {
+          "task_name": "Light installation",
+          "price": 80
+        }
+      ]
+    }
+  ]''';
 
-  void handleBackClick() {
+  handleBackClick() {
     Navigator.pop(context);
   }
 
-  void handleChatClick() {
-    // Handle chat button click
+  handleChatClick() {
+
+  }
+
+  handleFilterClick(){
+
+  }
+
+  editProfileClick(){
+    Navigator.pushNamed(
+        context,
+        '/customerEditProfileScreen',
+        arguments: jsonData
+    );
+  }
+
+  saveClickHandler(bool saved, String sID){
+
   }
 
   Future<void> fetchData() async {
     try {
-      // We move this logic here to ensure that the context is valid
-      final Map<String, dynamic>? args =
-      ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      var email = await getEmail();
 
-      if (args != null && args.containsKey("cID")) {
-        cID = args["cID"];
+      final url1 = Uri.parse('$apiUrl/customers/getCustomerDetails'); // Replace with your URL
+
+      try {
+        final response = await http.post(
+          url1,
+          headers: {'Content-Type': 'application/json'}, // Optional headers
+          body: '{"email": "$email"}',
+        );
+
+        if (response.statusCode == 200) {
+          // Decode the JSON response
+          jsonString = response.body; // Get JSON as a raw string
+        } else {
+          print('Request failed with status: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error occurred: $e');
       }
 
-      Map<String, dynamic> jsonData = jsonDecode(jsonString);
-      customerData = CustomerInfo.fromJson(jsonData);
-    } catch (e) {
-      // Handle errors
-      print("Error fetching data: $e");
-    } finally {
-      // Update loading state
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+      jsonData = jsonDecode(jsonString);
+      serviceProviderData = ServiceProviderInfo.fromJson(jsonData);
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (isLoading) {
-      fetchData(); // Fetch data when the screen initializes
+      List<dynamic> jsonData2 = jsonDecode(jsonString2);
+
+      // await Future.delayed(const Duration(seconds: 3));
+      // Simulate fetching data
+      // You can replace this with actual data-fetching logic
+      // e.g., var response = await http.get('https://api.example.com/data');
+      // if (response.statusCode == 200) {
+      //   return jsonDecode(response.body);
+      // } else {
+      //   throw Exception('Failed to load data');
+      // }
+
+      // For demonstration purposes, we'll just print a message
+      // print('Content loaded successfully');
+    } catch (e) {
+      // Handle exceptions and errors
+      // print('Error loading content: $e');
+      rethrow; // Rethrow the exception to let FutureBuilder handle it
     }
   }
 
@@ -70,21 +170,18 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: const CustomDrawer(),
         key: _scaffoldKey,
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: AppColors.white, // Change to your desired color
+          ),
           backgroundColor: AppColors.primary,
           title: Center(
-            child: Text(
-              AppStrings.appTitle,
-              style: AppTextStyles.title.merge(AppTextStyles.textWhite),
-            ),
-          ),
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: AppColors.white,
-            ),
-            onPressed: handleBackClick,
+              child: Text(
+                AppStrings.appTitle,
+                style: AppTextStyles.title.merge(AppTextStyles.textWhite),
+              )
           ),
           actions: [
             IconButton(
@@ -96,157 +193,154 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
             )
           ],
         ),
-        drawer: const Drawer(),
-        body: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: customerData != null // Check if customerData is not null
-              ? Column(
-            children: [
-              Center(
-                child: CustomerInfoBox(
-                  imgURL: customerData!.imgURL, // Use customerData safely
-                  cID: customerData!.cID,
-                  cName: customerData!.cName,
-                  rating: customerData!.rating,
-                  newCustomer: customerData!.newCustomer,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ProfileOption(
-                title: 'My loyalty credits',
-                onTap: () {},
-              ),
-              ProfileOption(
-                title: 'Manage payment methods',
-                onTap: () {},
-              ),
-              ProfileOption(
-                title: 'Manage addresses',
-                onTap: () {},
-              ),
-              ProfileOption(
-                title: 'Settings',
-                onTap: () {},
-              ),
-              const Spacer(),
-              ElevatedButton(
-                onPressed: () {
-                  // Navigate to Login Screen
-                  Navigator.pushReplacementNamed(context, '/loginScreen');
-                },
-
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+        bottomNavigationBar: const CustomBottomNavigationBar(),
+        resizeToAvoidBottomInset: false,
+        body: FutureBuilder(
+            future: fetchData(),
+            builder: (context, snapshot){
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return const Center(child: CircularProgressIndicator(
+                  color: AppColors.primary,
+                ));
+              } else if(snapshot.hasError){
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else{
+                return Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        serviceProviderInfo(serviceProviderData.imgURL, serviceProviderData.sID, serviceProviderData.sName, serviceProviderData.category, serviceProviderData.newSProvider, serviceProviderData.rating, serviceProviderData.reviews, serviceProviderData.ordersCompleted, serviceProviderData.away),
+                        const SizedBox(height: 20.0),
+                        Column(
+                          children: List.generate(5 * 2 - 1, (index) {
+                            if (index.isEven) {
+                              int itemIndex = index ~/ 2;
+                              return const SizedBox(height: 100, width: double.infinity);
+                            } else {
+                              return const SizedBox(height: 20.0); // Spacing between items
+                            }
+                          }),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                child: const Text('Logout'),
-              ),
-            ],
-          )
-              : Center(child: Text("Failed to load customer data")), // Handle null case
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: AppStrings.home,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.groups_rounded),
-              label: AppStrings.bidding,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search_rounded),
-              label: AppStrings.home,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.assignment_rounded),
-              label: AppStrings.home,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle_rounded),
-              label: AppStrings.viewProfile,
-            ),
-          ],
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          selectedItemColor: AppColors.white,
-          unselectedItemColor: AppColors.tertiary,
-          backgroundColor: AppColors.primary,
-          type: BottomNavigationBarType.fixed,
+                );
+              }
+            }
         ),
       ),
     );
   }
-}
 
-// Updated CustomerInfoBox widget to take dynamic data
-class CustomerInfoBox extends StatelessWidget {
-  final String imgURL;
-  final String cID;
-  final String cName;
-  final bool newCustomer;
-  final double rating;
-
-  const CustomerInfoBox({
-    super.key,
-    required this.imgURL,
-    required this.cID,
-    required this.cName,
-    required this.newCustomer,
-    required this.rating,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget serviceProviderInfo(String imgURL, String sID, String sName, String category, bool newSProvider, double rating, int reviews, int ordersCompleted, double away) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 40.0,
-              backgroundImage: NetworkImage(imgURL),
-            ),
+            ClipOval(
+              child: SizedBox(
+                width: 80,
+                height: 80,
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: Image.network(imgURL),
+                ),
+              ),
+            )
           ],
         ),
         const SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              cName,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.normal),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to Edit Profile Screen
-                Navigator.pushNamed(context, '/customerEditProfileScreen');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              child: Row(
-                children: const [
-                  Text('Edit Profile'),
-                  Icon(
-                    Icons.arrow_right,
-                    color: AppColors.white,
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    sName,
+                    style: AppTextStyles.text2,
+                  ),
+                  const SizedBox(width: 4),
+                  Container(
+                    decoration: ShapeDecoration(
+                      color: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (newSProvider)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 2),
+                            child: Text(
+                              AppStrings.newSeller,
+                              style: AppTextStyles.textSmallBold
+                                  .merge(AppTextStyles.textWhite),
+                            ),
+                          )
+                        else
+                          const SizedBox.shrink(),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 4.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    category,
+                    style: AppTextStyles.textSmall
+                        .merge(AppTextStyles.textMediumGrey),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4.0),
+              FittedBox(
+                child: GestureDetector(
+                  onTap: (){
+                    editProfileClick();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(8),  // Rounded corners with radius of 12
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                      child: Row(
+                        children: [
+                          Text(
+                            AppStrings.editProfile,
+                            style: AppTextStyles.text2.merge(AppTextStyles.textWhite),
+                          ),
+                          const SizedBox(width: 10,),
+                          const Icon(
+                            Icons.arrow_right,
+                            color: AppColors.white,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
-        const Spacer(),
+        const SizedBox(width: 10),
         Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Row(
@@ -257,66 +351,102 @@ class CustomerInfoBox extends StatelessWidget {
                   rating.toString(),
                   style: AppTextStyles.text2.merge(AppTextStyles.textPrimary),
                 ),
+                const SizedBox(width: 4),
+                Text(
+                  '(${reviews.toString()})',
+                  style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(
+                  ordersCompleted.toString(),
+                  style: AppTextStyles.text2.merge(AppTextStyles.textPrimary),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  AppStrings.orders,
+                  style: AppTextStyles.textExtraSmall
+                      .merge(AppTextStyles.textMediumGrey),
+                )
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(
+                  away.toString(),
+                  style: AppTextStyles.text2.merge(AppTextStyles.textPrimary),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  AppStrings.km,
+                  style: AppTextStyles.textExtraSmall
+                      .merge(AppTextStyles.textMediumGrey),
+                ),
               ],
             ),
           ],
-        ),
+        )
       ],
     );
   }
-}
 
-class ProfileOption extends StatelessWidget {
-  final String title;
-  final VoidCallback onTap;
-
-  const ProfileOption({super.key, required this.title, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.all(16.0),
-          backgroundColor: AppColors.secondary,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  Widget getNewTag(bool newSProvider){
+    if(newSProvider){
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        decoration: ShapeDecoration(
+          color: AppColors.primary,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         ),
-        child: Align(
-          alignment: Alignment.centerLeft,
+        child: Center(
           child: Text(
-            title,
-            style: const TextStyle(fontSize: 16, color: AppColors.white),
+              AppStrings.newSeller,
+              style: AppTextStyles.textSmallBold.merge(AppTextStyles.textWhite)
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Container();
+    }
   }
 }
 
-class CustomerInfo {
+class ServiceProviderInfo {
   final String imgURL;
-  final String cID;
-  final String cName;
+  final String sID;
+  final String sName;
+  final String category;
+  final bool newSProvider;
   final double rating;
-  final bool newCustomer;
-
-  CustomerInfo({
+  final int reviews;
+  final int ordersCompleted;
+  final double away;
+  ServiceProviderInfo({
     required this.imgURL,
-    required this.cID,
-    required this.cName,
-    required this.newCustomer,
+    required this.sID,
+    required this.sName,
+    required this.category,
+    required this.newSProvider,
     required this.rating,
+    required this.reviews,
+    required this.ordersCompleted,
+    required this.away,
   });
-
-  factory CustomerInfo.fromJson(Map<String, dynamic> json) {
-    return CustomerInfo(
-      imgURL: json['imgURL'],
-      cID: json['cID'],
-      cName: json['cName'],
-      newCustomer: json['newCustomer'],
-      rating: json['rating'].toDouble(),
+  factory ServiceProviderInfo.fromJson(Map<String, dynamic> json) {
+    return ServiceProviderInfo(
+      imgURL: json['imgUrl'],
+      sID: json['uuid'],
+      sName: json['firstName'],
+      category: json['lastName'],
+      newSProvider: true,
+      rating: json['zipCode'].toDouble(),
+      reviews: json['zipCode'],
+      ordersCompleted: json['zipCode'],
+      away: json['zipCode'].toDouble(),
     );
   }
 }
