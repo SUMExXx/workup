@@ -6,6 +6,7 @@ import 'package:workup/utils/design_styles.dart';
 import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:workup/widgets/bottom_navigation_bar.dart';
 
 class ServiceProviderListScreen extends StatefulWidget {
   const ServiceProviderListScreen({super.key});
@@ -98,36 +99,38 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
 
   String jsonString = "";
 
-  String jsonString2 = '''[
-    {
-      "text": "Light",
-      "subcategory": "light"
-    },
-    {
-      "text": "Fan",
-      "subcategory": "fan"
-    },
-    {
-      "text": "Wiring",
-      "subcategory": "wiring"
-    },
-    {
-      "text": "Switch Board",
-      "subcategory": "switch_board"
-    },
-    {
-      "text": "Appliances",
-      "subcategory": "appliances"
-    },
-    {
-      "text": "Light",
-      "subcategory": "light"
-    },
-    {
-      "text": "Fan",
-      "subcategory": "fan"
-    }
-  ]''';
+  // String jsonString2 = '''[
+  //   {
+  //     "text": "Light",
+  //     "subcategory": "light"
+  //   },
+  //   {
+  //     "text": "Fan",
+  //     "subcategory": "fan"
+  //   },
+  //   {
+  //     "text": "Wiring",
+  //     "subcategory": "wiring"
+  //   },
+  //   {
+  //     "text": "Switch Board",
+  //     "subcategory": "switch_board"
+  //   },
+  //   {
+  //     "text": "Appliances",
+  //     "subcategory": "appliances"
+  //   },
+  //   {
+  //     "text": "Light",
+  //     "subcategory": "light"
+  //   },
+  //   {
+  //     "text": "Fan",
+  //     "subcategory": "fan"
+  //   }
+  // ]''';
+
+  String jsonString2 = "";
 
   handleBackClick() {
     Navigator.pop(context);
@@ -166,6 +169,8 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
 
       final url1 = Uri.parse('$apiUrl/customers/getServiceProviders'); // Replace with your URL
 
+      final url2 = Uri.parse('$apiUrl/customers/getSubcategories');
+
       try {
         final response = await http.post(
           url1,
@@ -176,6 +181,23 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
         if (response.statusCode == 200) {
           // Decode the JSON response
           jsonString = response.body; // Get JSON as a raw string
+        } else {
+          print('Request failed with status: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error occurred: $e');
+      }
+
+      try {
+        final response = await http.post(
+          url2,
+          headers: {'Content-Type': 'application/json'}, // Optional headers
+          body: '{"category_id": "${args["category"]}"}',
+        );
+
+        if (response.statusCode == 200) {
+          // Decode the JSON response
+          jsonString2 = response.body; // Get JSON as a raw string
         } else {
           print('Request failed with status: ${response.statusCode}');
         }
@@ -238,36 +260,7 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
             )
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.groups_rounded),
-                label: AppStrings.bidding
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.search_rounded),
-                label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.assignment_rounded),
-                label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle_rounded),
-                label: AppStrings.home
-            ),
-          ],
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          selectedItemColor: AppColors.white,
-          unselectedItemColor: AppColors.tertiary,
-          backgroundColor: AppColors.primary,
-          type: BottomNavigationBarType.fixed,
-        ),
+        bottomNavigationBar: const CustomBottomNavigationBar(),
         resizeToAvoidBottomInset: false,
         body: FutureBuilder(
           future: fetchData(),
@@ -574,8 +567,8 @@ class Subcategory{
   // Factory method to create a Service object from JSON
   factory Subcategory.fromJson(Map<String, dynamic> json) {
     return Subcategory(
-      text: json['text'],
-      subcategory: json['subcategory'],
+      text: json['subcategory_name'],
+      subcategory: json['subcategory_id'],
     );
   }
 }

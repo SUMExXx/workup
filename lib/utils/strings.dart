@@ -12,4 +12,5 @@ class AppStrings {
   static const String languages = "LANGUAGES";
   static const String reviews = "REVIEWS";
   static const String viewProfile = "View Profile";
+  static const String editProfile = "Edit Profile";
 }

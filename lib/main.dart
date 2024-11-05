@@ -43,9 +43,9 @@ Future<void> requestAllPermissions() async {
   // Handle the permissions' statuses if needed
   statuses.forEach((permission, status) {
     if (status.isGranted) {
-      // Permission granted
+      // print('${permission.toString()} granted');
     } else if (status.isDenied) {
-      // Permission denied
+      // print('${permission.toString()} denied');
     } else if (status.isPermanentlyDenied) {
       // The user permanently denied the permission, open app settings
       openAppSettings();
@@ -68,6 +68,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/loginScreen',
       routes: {
+        // '/': (context) => const LoginScreen(),
         '/loginScreen': (context) => const LoginScreen(),
         '/homepageScreen': (context) => const HomepageScreen(),
         '/serviceProviderListScreen' : (context) => const ServiceProviderListScreen(),
@@ -78,12 +79,18 @@ class MyApp extends StatelessWidget {
         '/serviceProviderLoginScreen': (context) => const ServiceProviderLoginScreen(),
         '/serviceProviderFullProfileScreen': (context) => const ServiceProviderFullProfileScreen(),
         '/serviceProviderProfileScreen': (context) => const ServiceProviderProfileScreen(),
-        '/customerProfileScreen': (context) => const CustomerProfileScreen(),  // <-- Add this line for the customer profile screen
+        '/customerProfileScreen': (context) => const CustomerProfileScreen(),
         '/customerEditProfileScreen': (context) => const CustomerEditProfileScreen(),
       },
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
         useMaterial3: true,
       ),
       home: const LoginScreen(),
