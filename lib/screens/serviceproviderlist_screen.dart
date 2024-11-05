@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:workup/utils/colors.dart';
 import 'package:workup/utils/design_styles.dart';
 import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ServiceProviderListScreen extends StatefulWidget {
   const ServiceProviderListScreen({super.key});
@@ -17,80 +19,84 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
   late List<ServiceProviderInfoBox> serviceProviderData;
   late List<Subcategory> subcategoryData;
 
-  String jsonString = '''[
-    {
-      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-      "sID": "suman",
-      "sName": "Suman Debnath",
-      "rating": 4.5,
-      "reviews": 20,
-      "newSProvider": true,
-      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
-      "away": 3.5,
-      "startingPrice": 150,
-      "saved": true
-    },
-    {
-      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-      "sID": "suman",
-      "sName": "Aniket Bandi",
-      "rating": 4.5,
-      "reviews": 20,
-      "newSProvider": false,
-      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
-      "away": 3.5,
-      "startingPrice": 150,
-      "saved": false
-    },
-    {
-      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-      "sID": "suman",
-      "sName": "Suman Debnath",
-      "rating": 4.5,
-      "reviews": 20,
-      "newSProvider": true,
-      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv chvch jbscjbc jascjc jascjc jscjc",
-      "away": 3.5,
-      "startingPrice": 150,
-      "saved": true
-    },
-    {
-      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-      "sID": "suman",
-      "sName": "Suman Debnath",
-      "rating": 4.5,
-      "reviews": 20,
-      "newSProvider": false,
-      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
-      "away": 3.5,
-      "startingPrice": 150,
-      "saved": true
-    },
-    {
-      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-      "sID": "suman",
-      "sName": "Suman Debnath",
-      "rating": 4.5,
-      "reviews": 20,
-      "newSProvider": true,
-      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
-      "away": 3.5,
-      "startingPrice": 150,
-      "saved": false
-    },
-    {
-      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-      "sID": "suman",
-      "sName": "Suman Debnath",
-      "rating": 4.5,
-      "reviews": 20,
-      "newSProvider": false,
-      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
-      "away": 3.5,
-      "startingPrice": 150,
-      "saved": true
-    }
-  ]''';
+  final String? apiUrl = dotenv.env['API_BASE_URL'];
+
+  // String jsonString = '''[
+  //   {
+  //     "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+  //     "sID": "suman",
+  //     "sName": "Suman Debnath",
+  //     "rating": 4.5,
+  //     "reviews": 20,
+  //     "newSProvider": true,
+  //     "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+  //     "away": 3.5,
+  //     "startingPrice": 150,
+  //     "saved": true
+  //   },
+  //   {
+  //     "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+  //     "sID": "suman",
+  //     "sName": "Aniket Bandi",
+  //     "rating": 4.5,
+  //     "reviews": 20,
+  //     "newSProvider": false,
+  //     "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+  //     "away": 3.5,
+  //     "startingPrice": 150,
+  //     "saved": false
+  //   },
+  //   {
+  //     "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+  //     "sID": "suman",
+  //     "sName": "Suman Debnath",
+  //     "rating": 4.5,
+  //     "reviews": 20,
+  //     "newSProvider": true,
+  //     "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv chvch jbscjbc jascjc jascjc jscjc",
+  //     "away": 3.5,
+  //     "startingPrice": 150,
+  //     "saved": true
+  //   },
+  //   {
+  //     "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+  //     "sID": "suman",
+  //     "sName": "Suman Debnath",
+  //     "rating": 4.5,
+  //     "reviews": 20,
+  //     "newSProvider": false,
+  //     "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+  //     "away": 3.5,
+  //     "startingPrice": 150,
+  //     "saved": true
+  //   },
+  //   {
+  //     "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+  //     "sID": "suman",
+  //     "sName": "Suman Debnath",
+  //     "rating": 4.5,
+  //     "reviews": 20,
+  //     "newSProvider": true,
+  //     "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+  //     "away": 3.5,
+  //     "startingPrice": 150,
+  //     "saved": false
+  //   },
+  //   {
+  //     "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+  //     "sID": "suman",
+  //     "sName": "Suman Debnath",
+  //     "rating": 4.5,
+  //     "reviews": 20,
+  //     "newSProvider": false,
+  //     "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+  //     "away": 3.5,
+  //     "startingPrice": 150,
+  //     "saved": true
+  //   }
+  // ]''';
+
+  String jsonString = "";
 
   String jsonString2 = '''[
     {
@@ -155,17 +161,35 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
 
   Future<void> fetchData() async {
     try {
-      //
-      // FETCH DATA HERE
-      //
-      // Simulate a network request delay
+
+      final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+      final url1 = Uri.parse('$apiUrl/customers/getServiceProviders'); // Replace with your URL
+
+      try {
+        final response = await http.post(
+          url1,
+          headers: {'Content-Type': 'application/json'}, // Optional headers
+          body: '{"email": "sumexxx666@gmail.com", "category": "${args["category"]}"}',
+        );
+
+        if (response.statusCode == 200) {
+          // Decode the JSON response
+          jsonString = response.body; // Get JSON as a raw string
+        } else {
+          print('Request failed with status: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error occurred: $e');
+      }
+
       List<dynamic> jsonData2 = jsonDecode(jsonString2);
       subcategoryData = jsonData2.map((item) => Subcategory.fromJson(item)).toList();
 
       List<dynamic> jsonData = jsonDecode(jsonString);
       serviceProviderData = jsonData.map((item) => ServiceProviderInfoBox.fromJson(item)).toList();
 
-      await Future.delayed(const Duration(seconds: 3));
+      // await Future.delayed(const Duration(seconds: 3));
       // Simulate fetching data
       // You can replace this with actual data-fetching logic
       // e.g., var response = await http.get('https://api.example.com/data');
@@ -417,7 +441,7 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
                                     ),
                                     const SizedBox(width: 4.0),
                                     Text(
-                                      '(${rating.toString()})',
+                                      '(${reviews.toString()})',
                                       style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
                                     ),
                                   ],
@@ -471,7 +495,7 @@ class _ServiceProviderListScreenState extends State<ServiceProviderListScreen> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  AppStrings.away,
+                                  AppStrings.from,
                                   style: AppTextStyles.textExtraSmall.merge(AppTextStyles.textMediumGrey),
                                 ),
                                 const SizedBox(width: 2.0),
@@ -583,17 +607,27 @@ class ServiceProviderInfoBox{
 
   // Factory method to create a Service object from JSON
   factory ServiceProviderInfoBox.fromJson(Map<String, dynamic> json) {
+
+    String createFullName(String firstName, String? middleName, String lastName) {
+      // Join the non-null values with a space
+      return [firstName, middleName, lastName]
+          .where((name) => name != null && name.isNotEmpty)
+          .join(' ');
+    }
+
     return ServiceProviderInfoBox(
       imgURL: json['imgURL'],
-      sID: json['sID'],
-      sName: json['sName'],
+      sID: json['uuid'],
+      sName: createFullName(json['firstName'], json['middleName'], json['lastName']),
       rating: json['rating'].toDouble(),
-      reviews: json['reviews'],
+      reviews: json['reviewCount'],
       newSProvider: json['newSProvider'],
       info: json['info'],
-      away: json['away'].toDouble(),
+      // away: json['away'].toDouble(),
+      away: 12.2,
       startingPrice: json['startingPrice'],
-      saved: json['saved'],
+      // saved: json['saved'],
+      saved: false,
     );
   }
 }
