@@ -4,6 +4,7 @@ class AppStrings {
   static const String bidding = "Bidding";
   static const String newSeller = "NEW";
   static const String away = "Away";
+  static const String from = "From";
   static const String km = "KM";
   static const String bio = "BIO";
   static const String orders = "ORDERS";
