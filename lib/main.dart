@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:workup/screens/customer_edit_profile_screen.dart';
 import 'package:workup/screens/homepage_screen.dart';
 import 'package:workup/screens/serviceprovider_profile_screen.dart';
 import 'package:workup/screens/serviceproviderlist_screen.dart';
 import 'package:workup/screens/login_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import 'package:workup/screens/serviceprovider_otp_screen.dart';
 import 'package:workup/screens/serviceprovider_register_screen.dart';
 import 'package:workup/screens/serviceprovider_login_screen.dart';
-
 import 'package:workup/screens/customer_registration_screen.dart';
 import 'package:workup/screens/customer_registration_otp_screen.dart';
 import 'package:workup/screens/serviceprovider_fullprofile_screen.dart';
-
-
+import 'package:workup/screens/customer_profile_screen.dart';  // <-- Import the customer profile screen
+import 'package:workup/screens/customer_edit_profile_screen.dart';
 void main() async {
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,9 +43,9 @@ Future<void> requestAllPermissions() async {
   // Handle the permissions' statuses if needed
   statuses.forEach((permission, status) {
     if (status.isGranted) {
-      // print('${permission.toString()} granted');
+      // Permission granted
     } else if (status.isDenied) {
-      // print('${permission.toString()} denied');
+      // Permission denied
     } else if (status.isPermanentlyDenied) {
       // The user permanently denied the permission, open app settings
       openAppSettings();
@@ -59,7 +58,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.white, // Transparent status bar
       systemNavigationBarColor: Colors.transparent, // Transparent navigation bar
@@ -70,7 +68,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/loginScreen',
       routes: {
-        // '/': (context) => const LoginScreen(),
         '/loginScreen': (context) => const LoginScreen(),
         '/homepageScreen': (context) => const HomepageScreen(),
         '/serviceProviderListScreen' : (context) => const ServiceProviderListScreen(),
@@ -80,8 +77,9 @@ class MyApp extends StatelessWidget {
         '/serviceProviderOtpScreen': (context) => const ServiceProviderOtpScreen(),
         '/serviceProviderLoginScreen': (context) => const ServiceProviderLoginScreen(),
         '/serviceProviderFullProfileScreen': (context) => const ServiceProviderFullProfileScreen(),
-        '/serviceProviderProfileScreen': (context) => const ServiceProviderProfileScreen()
-
+        '/serviceProviderProfileScreen': (context) => const ServiceProviderProfileScreen(),
+        '/customerProfileScreen': (context) => const CustomerProfileScreen(),  // <-- Add this line for the customer profile screen
+        '/customerEditProfileScreen': (context) => const CustomerEditProfileScreen(),
       },
       title: 'Flutter Demo',
       theme: ThemeData(
