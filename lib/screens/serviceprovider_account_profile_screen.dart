@@ -9,15 +9,16 @@ import 'package:workup/utils/text_styles.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:workup/widgets/bottom_navigation_bar.dart';
 import 'package:workup/widgets/drawer.dart';
+import 'package:workup/widgets/sp_bottom_navigation_bar.dart';
 
-class CustomerProfileScreen extends StatefulWidget {
-  const CustomerProfileScreen({super.key});
+class ServiceProviderAccountProfileScreen extends StatefulWidget {
+  const ServiceProviderAccountProfileScreen({super.key});
 
   @override
-  State<CustomerProfileScreen> createState() => _CustomerProfileScreenState();
+  State<ServiceProviderAccountProfileScreen> createState() => _ServiceProviderAccountProfileScreenState();
 }
 
-class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
+class _ServiceProviderAccountProfileScreenState extends State<ServiceProviderAccountProfileScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late ServiceProviderInfo serviceProviderData;
   final String? apiUrl = dotenv.env['API_BASE_URL'];
@@ -130,8 +131,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
   Future<void> fetchData() async {
     try {
       var email = await getEmail();
-
-      final url1 = Uri.parse('$apiUrl/customers/getCustomerDetails'); // Replace with your URL
+      final url1 = Uri.parse('$apiUrl/serviceProviders/getServiceProviderDetails'); // Replace with your URL
 
       try {
         final response = await http.post(
@@ -201,7 +201,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
             )
           ],
         ),
-        bottomNavigationBar: const CustomBottomNavigationBar(),
+        bottomNavigationBar: const SPCustomBottomNavigationBar(),
         resizeToAvoidBottomInset: false,
         body: FutureBuilder(
             future: fetchData(),
@@ -215,29 +215,60 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
               } else{
                 return Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        serviceProviderInfo(serviceProviderData.imgURL, serviceProviderData.sID, serviceProviderData.sName, serviceProviderData.category, serviceProviderData.newSProvider, serviceProviderData.rating, serviceProviderData.reviews, serviceProviderData.ordersCompleted, serviceProviderData.away),
-                        const SizedBox(height: 20.0),
-                        Column(
-                          children: List.generate(5 * 2 - 1, (index) {
-                            if (index.isEven) {
-                              int itemIndex = index ~/ 2;
-                              return const SizedBox(height: 100, width: double.infinity);
-                            } else {
-                              return const SizedBox(height: 20.0); // Spacing between items
-                            }
-                          }),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              serviceProviderInfo(serviceProviderData.imgURL, serviceProviderData.sID, serviceProviderData.sName, serviceProviderData.category, serviceProviderData.newSProvider, serviceProviderData.rating, serviceProviderData.reviews, serviceProviderData.ordersCompleted, serviceProviderData.away),
+                              const SizedBox(height: 20.0),
+                              Column(
+                                children: List.generate(5 * 2 - 1, (index) {
+                                  if (index.isEven) {
+                                    int itemIndex = index ~/ 2;
+                                    return const SizedBox(height: 100, width: double.infinity);
+                                  } else {
+                                    return const SizedBox(height: 20.0); // Spacing between items
+                                  }
+                                }),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                      _buildLogOutSPButton()
+                    ],
                   ),
                 );
               }
             }
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogOutSPButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF86469C),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(1000),
+          ),
+        ),
+        onPressed: logOutSPClick,
+        child: const Text(
+          'Logout',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );
@@ -446,15 +477,15 @@ class ServiceProviderInfo {
   });
   factory ServiceProviderInfo.fromJson(Map<String, dynamic> json) {
     return ServiceProviderInfo(
-      imgURL: json['imgUrl'],
+      imgURL: json['imgURL'],
       sID: json['uuid'],
       sName: json['firstName'],
       category: json['lastName'],
-      newSProvider: true,
-      rating: json['zipCode'].toDouble(),
-      reviews: json['zipCode'],
-      ordersCompleted: json['zipCode'],
-      away: json['zipCode'].toDouble(),
+      newSProvider: json['newSProvider'],
+      rating: json['rating'].toDouble(),
+      reviews: json['reviewCount'],
+      ordersCompleted: json['rating'],
+      away: json['rating'].toDouble(),
     );
   }
 }
