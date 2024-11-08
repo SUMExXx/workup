@@ -17,6 +17,8 @@ import 'package:workup/screens/customer_registration_otp_screen.dart';
 import 'package:workup/screens/serviceprovider_fullprofile_screen.dart';
 import 'package:workup/screens/customer_profile_screen.dart';  // <-- Import the customer profile screen
 import 'package:workup/screens/customer_edit_profile_screen.dart';
+import 'package:workup/screens/customer_cart_screen.dart';
+
 void main() async {
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
@@ -83,6 +85,7 @@ class MyApp extends StatelessWidget {
         '/serviceProviderProfileScreen': (context) => const ServiceProviderProfileScreen(),
         '/customerProfileScreen': (context) => const CustomerProfileScreen(),
         '/customerEditProfileScreen': (context) => const CustomerEditProfileScreen(),
+        '/customerCartScreen': (context) => const CustomerCartScreen(),
         '/serviceProviderHomepageScreen': (context) => const ServiceProviderHomepageScreen(),
         '/serviceProviderAccountProfileScreen': (context) => const ServiceProviderAccountProfileScreen()
       },
