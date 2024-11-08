@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workup/screens/customer_edit_profile_screen.dart';
 import 'package:workup/screens/homepage_screen.dart';
+import 'package:workup/screens/serviceprovider_account_profile_screen.dart';
+import 'package:workup/screens/serviceprovider_homepage_screen.dart';
 import 'package:workup/screens/serviceprovider_profile_screen.dart';
 import 'package:workup/screens/serviceproviderlist_screen.dart';
 import 'package:workup/screens/login_screen.dart';
@@ -81,6 +83,8 @@ class MyApp extends StatelessWidget {
         '/serviceProviderProfileScreen': (context) => const ServiceProviderProfileScreen(),
         '/customerProfileScreen': (context) => const CustomerProfileScreen(),
         '/customerEditProfileScreen': (context) => const CustomerEditProfileScreen(),
+        '/serviceProviderHomepageScreen': (context) => const ServiceProviderHomepageScreen(),
+        '/serviceProviderAccountProfileScreen': (context) => const ServiceProviderAccountProfileScreen()
       },
       title: 'Flutter Demo',
       theme: ThemeData(

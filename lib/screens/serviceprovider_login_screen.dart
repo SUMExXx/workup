@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workup/models/service_provider_model.dart';  // Import ServiceProvider model
 import 'package:workup/utils/colors.dart';
+import 'package:workup/utils/secure_storage.dart';
 import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
 import '../services/auth_service.dart';
@@ -20,31 +21,39 @@ class _ServiceProviderLoginState extends State<ServiceProviderLoginScreen> {
 
   // Register button click handler
   serviceProviderLoginButtonClick() {
-    _registerServiceProvider();
+    _loginServiceProvider();
+  }
+
+  registerServiceProvider(){
+    Navigator.pushNamed(context, '/serviceProviderRegisterScreen');
   }
 
 
-  Future<void> _registerServiceProvider() async {
+  Future<void> _loginServiceProvider() async {
     final email = _emailController.text;
     final password = _passwordController.text;
 
     final serviceProvider = ServiceProvider(email: email, password: password);
-    final response = await _authService.registerServiceProvider(serviceProvider);
-
-    switch (response) {
-      case 400:
+    final response = await _authService.loginServiceProvider(serviceProvider);
+    print(response['code']);
+    switch (response['code']) {
+      case 'Error':
       // Statements for value1
         break;
-      case 401:
+      case 'InvalidEmail':
       // Statements for value2
         break;
-      case 402:
+      case 'InvalidPassword':
       // Statements for value2
         break;
-      case 200:
-        Navigator.pushNamed(
+      case 'Success':
+        await saveType("sp");
+        await saveToken(response['token']);
+        await saveEmail(email);
+        await savePassword(password);
+        Navigator.pushReplacementNamed(
             context,
-            '/homepageScreen',
+            '/serviceProviderHomepageScreen',
             arguments: {
               'email': email,
             }
@@ -131,7 +140,7 @@ class _ServiceProviderLoginState extends State<ServiceProviderLoginScreen> {
                           const SizedBox(height: 20),
                           _buildTextField(_passwordController, 'Password', obscureText: true),
                           const SizedBox(height: 20),
-                          _buildElevatedButton('Register'),
+                          _buildElevatedButton('Login'),
                           const SizedBox(height: 20),
                           _buildSocialMediaOptions(),
                           const SizedBox(height: 20),
@@ -254,11 +263,11 @@ class _ServiceProviderLoginState extends State<ServiceProviderLoginScreen> {
   }
 
   Widget _buildRegisterRow() {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          'Do not have an account?',
+        const Text(
+          'Don\'t have an account?',
           style: TextStyle(
             color: Color(0xFF2F2F2F),
             fontSize: 12,
@@ -267,16 +276,19 @@ class _ServiceProviderLoginState extends State<ServiceProviderLoginScreen> {
             height: 0,
           ),
         ),
-        SizedBox(width: 8),
-        Text(
-          'Register',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Color(0xFF86469C),
-            fontSize: 12,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w500,
-            height: 0,
+        const SizedBox(width: 8),
+        TextButton(
+          onPressed: registerServiceProvider,
+          child: const Text(
+            'Register',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Color(0xFF86469C),
+              fontSize: 12,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w500,
+              height: 0,
+            ),
           ),
         ),
       ],
