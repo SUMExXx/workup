@@ -28,6 +28,10 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.pushNamed(context, '/serviceProviderRegisterScreen');
   }
 
+  loginServiceProviderClick(){
+    Navigator.pushNamed(context, '/serviceProviderLoginScreen');
+  }
+
   Future<void> _login() async {
     final email = _emailController.text;
     final password = _passwordController.text;
@@ -46,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // Statements for value2
         break;
       case 'Success':
+        await saveType("cu");
         await saveToken(response['token']);
         await saveEmail(email);
         await savePassword(password);
@@ -58,12 +63,25 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _checkLogin() async {
+    var type = await getType();
     var token = await getToken();
     var email = await getEmail();
-    var loginState = await _authService.verifyLogin(email!, token!);
-    if (loginState!) {
-      Navigator.pushReplacementNamed(context, '/homepageScreen');
+
+    switch(type){
+      case 'cu':
+        var loginState = await _authService.verifyLogin(email!, token!);
+        if (loginState!) {
+          Navigator.pushReplacementNamed(context, '/homepageScreen');
+        }
+        break;
+      case 'sp':
+        var loginState = await _authService.verifyLoginServiceProvider(email!, token!);
+        if (loginState!) {
+          Navigator.pushReplacementNamed(context, '/serviceProviderHomepageScreen');
+        }
+        break;
     }
+
   }
 
   @override
@@ -133,35 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: 20),
                           _buildText('Are you a Service Provider?'),
                           const SizedBox(height: 20),
-                          Container(
-                            width: 340,
-                            height: 36,
-                            padding: const EdgeInsets.all(10),
-                            clipBehavior: Clip.antiAlias,
-                            decoration: ShapeDecoration(
-                              color: const Color(0xFF86469C),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Login as Service Provider',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w500,
-                                    height: 0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          _buildLoginSPButton(),
                           const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -241,6 +231,30 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Text(
           text,
           style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoginSPButton() {
+    return SizedBox(
+      width: 340,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF86469C),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
+        ),
+        onPressed: loginServiceProviderClick,
+        child: const Text(
+          'Login as Service Provider',
+          style: TextStyle(
             color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.w500,

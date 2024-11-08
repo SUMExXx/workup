@@ -2,6 +2,18 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 const storage = FlutterSecureStorage();
 
+Future<void> saveType(String type) async {
+  await storage.write(key: 'user_type', value: type);
+}
+
+Future<String?> getType() async {
+  return await storage.read(key: 'user_type');
+}
+
+Future<void> deleteType() async {
+  await storage.delete(key: 'user_type');
+}
+
 Future<void> saveToken(String token) async {
   await storage.write(key: 'jwt_token', value: token);
 }
