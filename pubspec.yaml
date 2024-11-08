@@ -33,7 +33,7 @@ dependencies:
   http: ^1.0.0
   flutter_native_splash:
   permission_handler:
-  flutter_dotenv: ^5.0.2
+  flutter_dotenv: ^5.2.1
   flutter_secure_storage: ^9.2.2
 
   # The following adds the Cupertino Icons font to your application.
