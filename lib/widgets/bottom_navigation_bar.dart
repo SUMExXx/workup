@@ -27,7 +27,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         Navigator.pushReplacementNamed(context, '/homepageScreen');
         break;
       case 2:
-        Navigator.pushReplacementNamed(context, '/homepageScreen');
+        Navigator.pushReplacementNamed(context, '/customerCartScreen');
         break;
       case 3:
         Navigator.pushReplacementNamed(context, '/homepageScreen');
