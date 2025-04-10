@@ -21,69 +21,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
 
   final String? apiUrl = dotenv.env['API_BASE_URL'];
 
-//   String jsonString = '''[
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     },
-//     {
-//         "imageURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-//         "text": "Electrician",
-//         "category": "electrician"
-//     }
-// ]''';
-
   String jsonString = "";
 
   handleMenuClick() {

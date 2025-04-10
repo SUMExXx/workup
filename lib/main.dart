@@ -4,6 +4,7 @@ import 'package:workup/screens/customer_edit_profile_screen.dart';
 import 'package:workup/screens/homepage_screen.dart';
 import 'package:workup/screens/serviceprovider_account_profile_screen.dart';
 import 'package:workup/screens/serviceprovider_homepage_screen.dart';
+import 'package:workup/screens/serviceprovider_order_confirm_screen.dart';
 import 'package:workup/screens/serviceprovider_profile_screen.dart';
 import 'package:workup/screens/serviceproviderlist_screen.dart';
 import 'package:workup/screens/login_screen.dart';
@@ -18,6 +19,8 @@ import 'package:workup/screens/serviceprovider_fullprofile_screen.dart';
 import 'package:workup/screens/customer_profile_screen.dart';  // <-- Import the customer profile screen
 import 'package:workup/screens/customer_edit_profile_screen.dart';
 import 'package:workup/screens/customer_cart_screen.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   await dotenv.load();
@@ -70,6 +73,7 @@ class MyApp extends StatelessWidget {
     ));
 
     return MaterialApp(
+      navigatorKey: navigatorKey,
       initialRoute: '/loginScreen',
       routes: {
         // '/': (context) => const LoginScreen(),
@@ -87,7 +91,8 @@ class MyApp extends StatelessWidget {
         '/customerEditProfileScreen': (context) => const CustomerEditProfileScreen(),
         '/customerCartScreen': (context) => const CustomerCartScreen(),
         '/serviceProviderHomepageScreen': (context) => const ServiceProviderHomepageScreen(),
-        '/serviceProviderAccountProfileScreen': (context) => const ServiceProviderAccountProfileScreen()
+        '/serviceProviderAccountProfileScreen': (context) => const ServiceProviderAccountProfileScreen(),
+        '/serviceProviderOrderConfirmScreen': (context) => const ServiceProviderOrderConfirmScreen(),
       },
       title: 'Flutter Demo',
       theme: ThemeData(

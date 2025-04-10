@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:workup/services/cart_service.dart';
 import 'package:workup/utils/colors.dart';
-import 'package:workup/utils/design_styles.dart';
 import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+
+import '../main.dart';
 
 class ServiceProviderProfileScreen extends StatefulWidget {
   const ServiceProviderProfileScreen({super.key});
@@ -12,99 +16,168 @@ class ServiceProviderProfileScreen extends StatefulWidget {
   State<ServiceProviderProfileScreen> createState() => _ServiceProviderProfileScreenState();
 }
 
-class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScreen> {
+class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScreen> with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late ServiceProviderInfo serviceProviderData;
   late List<Subcategory> serviceProviderSubcategoryData;
-
+  final String? apiUrl = dotenv.env['API_BASE_URL'];
   String? sID;
+  final CartState cartState = CartState();
 
-  String jsonString = '''
-    {
-      "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
-      "sID": "suman",
-      "sName": "Suman Debnath",
-      "rating": 4.5,
-      "reviews": 20,
-      "newSProvider": true,
-      "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
-      "away": 3.5,
-      "startingPrice": 150,
-      "saved": true,
-      "ordersCompleted": 50,
-      "category": "Electrician"
-    }''';
+  String jsonString = "";
+  // String jsonString = '''
+  //   {
+  //     "imgURL": "https://res.cloudinary.com/deeqsba43/image/upload/v1691336265/cld-sample-4.jpg",
+  //     "sID": "suman",
+  //     "sName": "Suman Debnath",
+  //     "rating": 4.5,
+  //     "reviews": 20,
+  //     "newSProvider": true,
+  //     "info": "lorem ipsum dolor sit ahfdj cjbcj jjkdcdjc jsvjdj jsdvj jdvjd sjbvjdv jsdbjd sjdcvjdv jcjdv",
+  //     "away": 3.5,
+  //     "startingPrice": 150,
+  //     "saved": true,
+  //     "ordersCompleted": 50,
+  //     "category": "Electrician"
+  //   }''';
 
-  String jsonString2 = '''[
-    {
-      "name": "Light",
-      "tasks": [
-        {
-          "task_name": "Light replacement",
-          "price": 100
-        },
-        {
-          "task_name": "Light installation",
-          "price": 80
-        }
-      ]
-    },
-    {
-      "name": "Light",
-      "tasks": [
-        {
-          "task_name": "Light replacement",
-          "price": 100
-        },
-        {
-          "task_name": "Light installation",
-          "price": 80
-        }
-      ]
-    },
-    {
-      "name": "Light",
-      "tasks": [
-        {
-          "task_name": "Light replacement",
-          "price": 100
-        },
-        {
-          "task_name": "Light installation",
-          "price": 80
-        }
-      ]
-    },
-    {
-      "name": "Light",
-      "tasks": [
-        {
-          "task_name": "Light replacement",
-          "price": 100
-        },
-        {
-          "task_name": "Light installation",
-          "price": 80
-        }
-      ]
-    },
-    {
-      "name": "Light",
-      "tasks": [
-        {
-          "task_name": "Light replacement",
-          "price": 100
-        },
-        {
-          "task_name": "Light installation",
-          "price": 80
-        }
-      ]
-    }
-  ]''';
+  String jsonString2 = "";
+  // String jsonString2 = '''[
+  //   {
+  //     "name": "Light",
+  //     "s_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //     "tasks": [
+  //       {
+  //         "task_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //         "task_name": "Light replacement",
+  //         "price": 100
+  //       },
+  //       {
+  //         "task_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //         "task_name": "Light installation",
+  //         "price": 80
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     "
+  //     "name": "Light",
+  //     "s_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //     "tasks": [
+  //       {
+  //         "task_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //         "task_name": "Light replacement",
+  //         "price": 100
+  //       },
+  //       {
+  //         "task_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //         "task_name": "Light installation",
+  //         "price": 80
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     "name": "Light",
+  //     "s_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //     "tasks": [
+  //       {
+  //         "task_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //         "task_name": "Light replacement",
+  //         "price": 100
+  //       },
+  //       {
+  //         "task_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //         "task_name": "Light installation",
+  //         "price": 80
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     "name": "Light",
+  //     "s_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //     "tasks": [
+  //       {
+  //         "task_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //         "task_name": "Light replacement",
+  //         "price": 100
+  //       },
+  //       {
+  //         "task_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //         "task_name": "Light installation",
+  //         "price": 80
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     "name": "Light",
+  //     "s_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //     "tasks": [
+  //       {
+  //         "task_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //         "task_name": "Light replacement",
+  //         "price": 100
+  //       },
+  //       {
+  //         "task_id": "12c46133-321a-4cd7-afd9-cc503fc23cae",
+  //         "task_name": "Light installation",
+  //         "price": 80
+  //       }
+  //     ]
+  //   }
+  // ]''';
+
+  bool isLoading = false;
 
   handleBackClick() {
     Navigator.pop(context);
+  }
+
+  confirmClick() async {
+
+    if(cartState.getJson().isEmpty){
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final orderData = {
+      "data": cartState.getJson(),
+      "sp": serviceProviderData.sID
+    };
+
+    final orderUrl = Uri.parse('$apiUrl/customers/placeOrder');
+
+    try {
+      final response = await http.post(
+        orderUrl,
+        headers: {'Content-Type': 'application/json'}, // Optional headers
+        body: jsonEncode(orderData),
+      );
+
+      if (response.statusCode == 200) {
+        // Decode the JSON response
+        setState(() {
+          isLoading = false;
+        });
+
+        navigatorKey.currentState?.pushReplacementNamed('/homepageScreen');
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch(e){
+      debugPrint(e.toString());
+    }
+
+    // Navigator.pushNamed(
+    //     context,
+    //     '/serviceProviderOrderConfirmScreen',
+    //     arguments: {
+    //       "data": CartState().getJson(),
+    //       "sp": serviceProviderData.toJson()
+    //     }
+    // );
   }
 
   handleChatClick() {
@@ -112,6 +185,10 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
   }
 
   handleFilterClick(){
+
+  }
+
+  handleDataStore(String subcategory, String ){
 
   }
 
@@ -129,14 +206,47 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
 
   Future<void> fetchData() async {
     try {
-      //
-      // FETCH DATA HERE
-      //
-      // Simulate a network request delay
       final Map<String, dynamic>? args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-
       if (args != null && args.containsKey("sID")) {
         sID = args["sID"];
+      }
+
+      final url1 = Uri.parse('$apiUrl/customers/getServiceProviderData'); // Replace with your URL
+
+      final url2 = Uri.parse('$apiUrl/customers/getServiceProviderSubcategories');
+
+      try {
+        final response = await http.post(
+          url1,
+          headers: {'Content-Type': 'application/json'}, // Optional headers
+          body: '{"sID": "$sID"}',
+        );
+
+        if (response.statusCode == 200) {
+          // Decode the JSON response
+          jsonString = response.body; // Get JSON as a raw string
+        } else {
+          print('Request failed with status: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error occurred: $e');
+      }
+
+      try {
+        final response = await http.post(
+          url2,
+          headers: {'Content-Type': 'application/json'}, // Optional headers
+          body: '{"sID": "$sID"}',
+        );
+
+        if (response.statusCode == 200) {
+          // Decode the JSON response
+          jsonString2 = response.body; // Get JSON as a raw string
+        } else {
+          print('Request failed with status: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error occurred: $e');
       }
 
       Map<String,dynamic> jsonData = jsonDecode(jsonString);
@@ -144,9 +254,8 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
 
       List<dynamic> jsonData2 = jsonDecode(jsonString2);
 
-      serviceProviderSubcategoryData = jsonData2.map((item) => Subcategory.make(item['name'], (item['tasks'] as List).map((task) => Task.make(task['task_name'], task['price'].toDouble())).toList())).toList();
+      serviceProviderSubcategoryData = jsonData2.map((item) => Subcategory.make(item['subcategory_name'], item['subcategory_id'], (item['tasks'] as List).map((task) => Task.make(task['task_name'], task['price'].toDouble(), task['task_id'], item['subcategory_id'])).toList())).toList();
 
-      await Future.delayed(const Duration(seconds: 3));
       // Simulate fetching data
       // You can replace this with actual data-fetching logic
       // e.g., var response = await http.get('https://api.example.com/data');
@@ -167,6 +276,7 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
@@ -238,25 +348,69 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
             } else{
               return Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      serviceProviderInfo(serviceProviderData.imgURL, serviceProviderData.sID, serviceProviderData.sName, serviceProviderData.category, serviceProviderData.newSProvider, serviceProviderData.rating, serviceProviderData.reviews, serviceProviderData.ordersCompleted, serviceProviderData.away),
-                      const SizedBox(height: 20.0),
-                      Column(
-                        children: List.generate(serviceProviderSubcategoryData.length * 2 - 1, (index) {
-                          if (index.isEven) {
-                            int itemIndex = index ~/ 2;
-                            return serviceProviderSubcategoryBox(serviceProviderSubcategoryData[itemIndex].name, serviceProviderSubcategoryData[itemIndex].tasks);
-                          } else {
-                            return const SizedBox(height: 20.0); // Spacing between items
-                          }
-                        }),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            serviceProviderInfo(serviceProviderData.imgURL, serviceProviderData.sID, serviceProviderData.sName, serviceProviderData.category, serviceProviderData.newSProvider, serviceProviderData.rating, serviceProviderData.reviews, serviceProviderData.ordersCompleted, serviceProviderData.away),
+                            const SizedBox(height: 20.0),
+                            Column(
+                              children: List.generate(serviceProviderSubcategoryData.length * 2 - 1, (index) {
+                                if (index.isEven) {
+                                  int itemIndex = index ~/ 2;
+                                  return serviceProviderSubcategoryBox(key: ValueKey("widget1"),serviceProviderSubcategoryData[itemIndex].name, serviceProviderSubcategoryData[itemIndex].tasks);
+                                } else {
+                                  return const SizedBox(height: 20.0); // Spacing between items
+                                }
+                              }),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10), // 10px padding on top
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 40, // Full width
+                        child: ElevatedButton(
+                          onPressed: () {
+                            confirmClick();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary, // Change to your desired color
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40), // 40px corner roundness
+                            ),
+                          ),
+                          child: isLoading?
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            child: Center(
+                              child: SizedBox(
+                                width: 24, // Ensures proper circular shape
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.white,
+                                  strokeWidth: 2, // Adjust thickness if needed
+                                ),
+                              ),
+                            ),
+                          )
+                          :
+                          Text(
+                            "Confirm order",
+                            style: TextStyle(color: AppColors.white), // Text color set to white
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
             }
@@ -426,7 +580,7 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
     );
   }
 
-  Widget serviceProviderSubcategoryBox(String name, List<Task> tasks){
+  Widget serviceProviderSubcategoryBox(String name, List<Task> tasks, {required ValueKey<String> key}){
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -443,14 +597,14 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
           ),
           const SizedBox(height: 20.0,),
           Column(
-            children: List.generate(tasks.length * 2 - 1, (index) {
+            children: tasks.isNotEmpty? List.generate(tasks.length * 2 - 1, (index) {
               if (index.isEven) {
                 int itemIndex = index ~/ 2;
-                return TaskBox(name:tasks[itemIndex].name, price:tasks[itemIndex].price, initialQty: 0);
+                return TaskBox(name:tasks[itemIndex].name, price:tasks[itemIndex].price, taskID:tasks[itemIndex].taskID, subcategoryID:tasks[itemIndex].subcategoryID, initialQty: 0);
               } else {
                 return const SizedBox(height: 10.0); // Spacing between items
               }
-            }),
+            }) : [],
           )
         ],
       ),
@@ -496,22 +650,31 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
       );
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class Task{
   final String name;
   final double price;
+  final String taskID;
+  final String subcategoryID;
 
   Task({
     required this.name,
-    required this.price
+    required this.price,
+    required this.taskID,
+    required this.subcategoryID
   });
 
   // Factory method to create a Service object from JSON
-  factory Task.make(String name, double price) {
+  factory Task.make(String name, double price, String taskID, String subcategoryID) {
     return Task(
       name: name,
       price: price,
+      taskID: taskID,
+      subcategoryID: subcategoryID
     );
   }
 }
@@ -519,17 +682,20 @@ class Task{
 class Subcategory{
   final String name;
   final List<Task> tasks;
+  final String sID;
 
   Subcategory({
     required this.name,
-    required this.tasks
+    required this.tasks,
+    required this.sID
   });
 
   // Factory method to create a Service object from JSON
-  factory Subcategory.make(String name, List<Task> tasks) {
+  factory Subcategory.make(String name, String sID, List<Task> tasks) {
     return Subcategory(
       name: name,
       tasks: tasks,
+      sID: sID
     );
   }
 }
@@ -544,6 +710,7 @@ class ServiceProviderInfo {
   final int reviews;
   final int ordersCompleted;
   final double away;
+
   ServiceProviderInfo({
     required this.imgURL,
     required this.sID,
@@ -555,6 +722,7 @@ class ServiceProviderInfo {
     required this.ordersCompleted,
     required this.away,
   });
+
   factory ServiceProviderInfo.fromJson(Map<String, dynamic> json) {
     return ServiceProviderInfo(
       imgURL: json['imgURL'],
@@ -568,19 +736,38 @@ class ServiceProviderInfo {
       away: json['away'].toDouble(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'imgURL': imgURL,
+      'sID': sID,
+      'sName': sName,
+      'category': category,
+      'newSProvider': newSProvider,
+      'rating': rating,
+      'reviews': reviews,
+      'ordersCompleted': ordersCompleted,
+      'away': away,
+    };
+  }
 }
 
 class TaskBox extends StatefulWidget {
+
   final String name;
   final double price;
   final int initialQty;
+  final String taskID;
+  final String subcategoryID;
 
   const TaskBox({
-    super.key,
+    Key? key,
     required this.name,
     required this.price,
+    required this.taskID,
+    required this.subcategoryID,
     this.initialQty = 0,
-  });
+  }) : super(key: key);
 
   @override
   State<TaskBox> createState() => _TaskBoxState();
@@ -588,6 +775,22 @@ class TaskBox extends StatefulWidget {
 
 class _TaskBoxState extends State<TaskBox> {
   late int qty;
+
+  void decrement() {
+    setState(() {
+      if (qty > 0) {
+        CartState().decrement(widget.subcategoryID, widget.taskID);
+        qty--;
+      }  // Decrease qty
+    });
+  }
+
+  void increment() {
+    setState(() {
+      CartState().increment(widget.subcategoryID, widget.taskID);
+      qty++;  // Increase qty
+    });
+  }
 
   @override
   void initState() {
@@ -601,7 +804,7 @@ class _TaskBoxState extends State<TaskBox> {
       children: [
         Expanded(
           child: Text(
-            widget.name,
+            "${widget.name} (Rs ${widget.price})",
             style: AppTextStyles.text1.merge(AppTextStyles.textWhite),
           ),
         ),
@@ -615,9 +818,7 @@ class _TaskBoxState extends State<TaskBox> {
             children: [
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    if (qty > 0) qty--;  // Decrease qty
-                  });
+                  increment();
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(4),
@@ -641,9 +842,7 @@ class _TaskBoxState extends State<TaskBox> {
               ),
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    qty++;  // Increase qty
-                  });
+                  increment();
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(4),
