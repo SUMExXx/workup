@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:workup/models/customer_model.dart';
+import 'package:workup/utils/colors.dart';
 import 'package:workup/utils/secure_storage.dart';
+import 'package:workup/utils/text_styles.dart';
 
 import '../services/auth_service.dart';
 
@@ -117,26 +119,28 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          const Text(
+                          Text(
                             "Welcome to Work Up",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: AppTextStyles.heading2.merge(AppTextStyles.textBlack)
+                            // TextStyle(
+                            //   color: Colors.black,
+                            //   fontSize: 20,
+                            //   fontFamily: 'Inter',
+                            //   fontWeight: FontWeight.bold,
+                            // ),
                           ),
                           const SizedBox(height: 10),
-                          const Text(
+                           Text(
                             'Please enter your registration email and password',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFF2F2F2F),
-                              fontSize: 12,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w400,
-                              height: 1.5,
-                            ),
+                            style: AppTextStyles.text1.merge(AppTextStyles.textDarkGrey)
+                            // TextStyle(
+                            //   color: Color(0xFF2F2F2F),
+                            //   fontSize: 12,
+                            //   fontFamily: 'Inter',
+                            //   fontWeight: FontWeight.w400,
+                            //   height: 1.5,
+                            // ),
                           ),
                           const SizedBox(height: 20),
                           _buildTextField(_emailController, 'Email or username'),
@@ -145,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: 20),
                           _buildElevatedButton('Continue'),
                           const SizedBox(height: 20), // Adjusted height for spacing
-                          _buildSocialMediaOptions(),
+                          // _buildSocialMediaOptions(),
                           const SizedBox(height: 20),
                           _buildRegisterRow(),
                           const SizedBox(height: 20),
@@ -158,28 +162,30 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               TextButton(
                                 onPressed: registerServiceProvider,
-                                child: const Text(
+                                child: Text(
                                   'Register',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Color(0xFF86469C),
-                                    fontSize: 12,
-                                    fontFamily: 'Inter',
-                                    fontWeight: FontWeight.w500,
-                                    height: 0,
-                                  ),
+                                  style: AppTextStyles.text2.merge(AppTextStyles.textPrimary)
+                                  // TextStyle(
+                                  //   color: Color(0xFF86469C),
+                                  //   fontSize: 12,
+                                  //   fontFamily: 'Inter',
+                                  //   fontWeight: FontWeight.w500,
+                                  //   height: 0,
+                                  // ),
                                 ),
                               ),
                               const SizedBox(width: 4),
-                              const Text(
+                               Text(
                                 'to become a Service Provider',
-                                style: TextStyle(
-                                  color: Color(0xFF2F2F2F),
-                                  fontSize: 12,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w500,
-                                  height: 0,
-                                ),
+                                style: AppTextStyles.text2.merge(AppTextStyles.textDarkGrey)
+                                // TextStyle(
+                                //   color: Color(0xFF2F2F2F),
+                                //   fontSize: 12,
+                                //   fontFamily: 'Inter',
+                                //   fontWeight: FontWeight.w500,
+                                //   height: 0,
+                                // ),
                               ),
                             ],
                           ),
@@ -208,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
           hintText: hintText,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Color(0xFFC1C1C1)),
+            borderSide: const BorderSide(color: AppColors.grey),
           ),
           contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
         ),
@@ -221,7 +227,8 @@ class _LoginScreenState extends State<LoginScreen> {
       width: 340,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF86469C),
+          backgroundColor: AppColors.primary,
+          // const Color(0xFF86469C),
           padding: const EdgeInsets.symmetric(vertical: 10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6),
@@ -245,7 +252,8 @@ class _LoginScreenState extends State<LoginScreen> {
       width: 340,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF86469C),
+          backgroundColor: AppColors.primary,
+          // const Color(0xFF86469C),
           padding: const EdgeInsets.symmetric(vertical: 10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6),
@@ -274,15 +282,16 @@ class _LoginScreenState extends State<LoginScreen> {
             onPressed: () {
               // Handle forgot password logic here
             },
-            child: const Text(
+            child: Text(
               'Forgot Password?',
-              style: TextStyle(
-                color: Color(0xFF86469C),
-                fontSize: 12,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w500,
-                height: 0,
-              ),
+              style: AppTextStyles.text2.merge(AppTextStyles.textPrimary)
+              // TextStyle(
+              //   color: Color(0xFF86469C),
+              //   fontSize: 12,
+              //   fontFamily: 'Inter',
+              //   fontWeight: FontWeight.w500,
+              //   height: 0,
+              // ),
             ),
           ),
         ],
@@ -360,13 +369,14 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: const TextStyle(
-          color: Color(0xFF2F2F2F),
-          fontSize: 12,
-          fontFamily: 'Inter',
-          fontWeight: FontWeight.w500,
-          height: 0,
-        ),
+        style: AppTextStyles.text2.merge(AppTextStyles.textDarkGrey)
+        // TextStyle(
+        //   color: Color(0xFF2F2F2F),
+        //   fontSize: 12,
+        //   fontFamily: 'Inter',
+        //   fontWeight: FontWeight.w500,
+        //   height: 0,
+        // ),
       ),
     );
   }
@@ -375,29 +385,31 @@ class _LoginScreenState extends State<LoginScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
+        Text(
           'Don\'t have an account?',
-          style: TextStyle(
-            color: Color(0xFF2F2F2F),
-            fontSize: 12,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-            height: 0,
-          ),
+          style: AppTextStyles.text1.merge(AppTextStyles.textDarkGrey)
+          // TextStyle(
+          //   color: Color(0xFF2F2F2F),
+          //   fontSize: 12,
+          //   fontFamily: 'Inter',
+          //   fontWeight: FontWeight.w400,
+          //   height: 0,
+          // ),
         ),
         const SizedBox(width: 8),
         TextButton(
           onPressed: registerCustomer,
-          child: const Text(
+          child: Text(
             'Register',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Color(0xFF86469C),
-              fontSize: 12,
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w500,
-              height: 0,
-            ),
+            style: AppTextStyles.text2.merge(AppTextStyles.textPrimary)
+            // TextStyle(
+            //   color: Color(0xFF86469C),
+            //   fontSize: 12,
+            //   fontFamily: 'Inter',
+            //   fontWeight: FontWeight.w500,
+            //   height: 0,
+            // ),
           ),
         ),
       ],

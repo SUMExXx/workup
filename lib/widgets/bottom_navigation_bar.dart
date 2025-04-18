@@ -51,7 +51,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           label: AppStrings.bidding,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search_rounded),
+          icon: Icon(Icons.shopping_cart_rounded),
           label: AppStrings.home,
         ),
         BottomNavigationBarItem(

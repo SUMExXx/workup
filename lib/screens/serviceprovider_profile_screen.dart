@@ -162,7 +162,7 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
           isLoading = false;
         });
 
-        navigatorKey.currentState?.pushReplacementNamed('/homepageScreen');
+        navigatorKey.currentState?.pushReplacementNamed('/orderConfirmationScreen');
       } else {
         print('Request failed with status: ${response.statusCode}');
       }
@@ -196,7 +196,7 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
     Navigator.pushNamed(
       context,
       '/serviceProviderFullProfileScreen',
-      arguments: sID
+      arguments: {"sID": sID},
     );
   }
 
@@ -725,7 +725,7 @@ class ServiceProviderInfo {
 
   factory ServiceProviderInfo.fromJson(Map<String, dynamic> json) {
     return ServiceProviderInfo(
-      imgURL: json['imgURL'],
+      imgURL: json['imgURL'] ?? '',
       sID: json['sID'],
       sName: json['sName'],
       category: json['category'],
@@ -818,7 +818,7 @@ class _TaskBoxState extends State<TaskBox> {
             children: [
               GestureDetector(
                 onTap: () {
-                  increment();
+                  decrement();
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(4),
