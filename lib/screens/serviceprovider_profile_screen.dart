@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:workup/services/cart_service.dart';
+import 'package:workup/services/payment_service.dart';
 import 'package:workup/utils/colors.dart';
 import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
@@ -132,9 +133,10 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
     Navigator.pop(context);
   }
 
-  confirmClick() async {
+  final PaymentService _paymentService = PaymentService();
 
-    if(cartState.getJson().isEmpty){
+  confirmClick() async {
+    if (cartState.getJson().isEmpty) {
       return;
     }
 
@@ -147,30 +149,41 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
       "sp": serviceProviderData.sID
     };
 
-    final orderUrl = Uri.parse('$apiUrl/customers/placeOrder');
+    // Wait for payment success
+    bool paymentSuccess = await _paymentService.openCheckout(amount: 500);
 
-    try {
-      final response = await http.post(
-        orderUrl,
-        headers: {'Content-Type': 'application/json'}, // Optional headers
-        body: jsonEncode(orderData),
-      );
+    if (paymentSuccess) {
+      final orderUrl = Uri.parse('$apiUrl/customers/placeOrder');
 
-      if (response.statusCode == 200) {
-        // Decode the JSON response
-        setState(() {
-          isLoading = false;
-        });
+      try {
+        final response = await http.post(
+          orderUrl,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(orderData),
+        );
 
-        navigatorKey.currentState?.pushReplacementNamed('/orderConfirmationScreen');
-      } else {
-        print('Request failed with status: ${response.statusCode}');
+        if (response.statusCode == 200) {
+          setState(() {
+            isLoading = false;
+          });
+          navigatorKey.currentState?.pushReplacementNamed('/homepageScreen');
+        } else {
+          print('Request failed with status: ${response.statusCode}');
+        }
+      } catch (e) {
+        debugPrint(e.toString());
       }
-    } catch(e){
-      debugPrint(e.toString());
+    } else {
+      // Payment failed, stop loading
+      setState(() {
+        isLoading = false;
+      });
+
+      print("Payment failed. Order not placed.");
     }
 
-    // Navigator.pushNamed(
+
+// Navigator.pushNamed(
     //     context,
     //     '/serviceProviderOrderConfirmScreen',
     //     arguments: {

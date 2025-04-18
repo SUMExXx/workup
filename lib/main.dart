@@ -16,9 +16,10 @@ import 'package:workup/screens/serviceprovider_login_screen.dart';
 import 'package:workup/screens/customer_registration_screen.dart';
 import 'package:workup/screens/customer_registration_otp_screen.dart';
 import 'package:workup/screens/serviceprovider_fullprofile_screen.dart';
-import 'package:workup/screens/customer_profile_screen.dart';  // <-- Import the customer profile screen
+import 'package:workup/screens/customer_profile_screen.dart'; // <-- Import the customer profile screen
 import 'package:workup/screens/customer_edit_profile_screen.dart';
 import 'package:workup/screens/customer_cart_screen.dart';
+import 'package:workup/screens/order_history_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -61,38 +62,56 @@ Future<void> requestAllPermissions() async {
 }
 
 class MyApp extends StatelessWidget {
+  //final bool startAtHomepage;
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.white, // Transparent status bar
-      systemNavigationBarColor: Colors.transparent, // Transparent navigation bar
-      statusBarIconBrightness: Brightness.dark, // Icons' brightness in the status bar
-      systemNavigationBarIconBrightness: Brightness.dark, // Icons' brightness in the nav bar
+      systemNavigationBarColor:
+          Colors.transparent, // Transparent navigation bar
+      statusBarIconBrightness:
+          Brightness.dark, // Icons' brightness in the status bar
+      systemNavigationBarIconBrightness:
+          Brightness.dark, // Icons' brightness in the nav bar
     ));
 
     return MaterialApp(
       navigatorKey: navigatorKey,
       initialRoute: '/loginScreen',
+      // initialRoute: startAtHomepage ? '/homepageScreen' : '/loginScreen',
       routes: {
         // '/': (context) => const LoginScreen(),
         '/loginScreen': (context) => const LoginScreen(),
         '/homepageScreen': (context) => const HomepageScreen(),
-        '/serviceProviderListScreen' : (context) => const ServiceProviderListScreen(),
-        '/customerRegistrationScreen': (context) => const CustomerRegisterScreen(),
-        '/customerOtpScreen': (context) => const CustomerRegistrationOtpScreen(),
-        '/serviceProviderRegisterScreen': (context) => const ServiceProviderRegisterScreen(),
-        '/serviceProviderOtpScreen': (context) => const ServiceProviderOtpScreen(),
-        '/serviceProviderLoginScreen': (context) => const ServiceProviderLoginScreen(),
-        '/serviceProviderFullProfileScreen': (context) => const ServiceProviderFullProfileScreen(),
-        '/serviceProviderProfileScreen': (context) => const ServiceProviderProfileScreen(),
+        '/serviceProviderListScreen': (context) =>
+            const ServiceProviderListScreen(),
+        '/customerRegistrationScreen': (context) =>
+            const CustomerRegisterScreen(),
+        '/customerOtpScreen': (context) =>
+            const CustomerRegistrationOtpScreen(),
+        '/serviceProviderRegisterScreen': (context) =>
+            const ServiceProviderRegisterScreen(),
+        '/serviceProviderOtpScreen': (context) =>
+            const ServiceProviderOtpScreen(),
+        '/serviceProviderLoginScreen': (context) =>
+            const ServiceProviderLoginScreen(),
+        '/serviceProviderFullProfileScreen': (context) =>
+            const ServiceProviderFullProfileScreen(),
+        '/serviceProviderProfileScreen': (context) =>
+            const ServiceProviderProfileScreen(),
         '/customerProfileScreen': (context) => const CustomerProfileScreen(),
-        '/customerEditProfileScreen': (context) => const CustomerEditProfileScreen(),
-        '/customerCartScreen': (context) => const CustomerCartScreen(),
-        '/serviceProviderHomepageScreen': (context) => const ServiceProviderHomepageScreen(),
-        '/serviceProviderAccountProfileScreen': (context) => const ServiceProviderAccountProfileScreen(),
-        '/serviceProviderOrderConfirmScreen': (context) => const ServiceProviderOrderConfirmScreen(),
+        '/customerEditProfileScreen': (context) =>
+            const CustomerEditProfileScreen(),
+
+        '/serviceProviderHomepageScreen': (context) =>
+            const ServiceProviderHomepageScreen(),
+        '/serviceProviderAccountProfileScreen': (context) =>
+            const ServiceProviderAccountProfileScreen(),
+        '/serviceProviderOrderConfirmScreen': (context) =>
+            const ServiceProviderOrderConfirmScreen(),
+        '/orderHistoryScreen': (context) => const OrderHistoryScreen(),
       },
       title: 'Flutter Demo',
       theme: ThemeData(
