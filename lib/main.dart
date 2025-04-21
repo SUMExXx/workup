@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workup/screens/customer_edit_profile_screen.dart';
 import 'package:workup/screens/homepage_screen.dart';
-import 'package:workup/screens/bid/customer/BidAcceptanceScreenCustomer.dart';
-import 'package:workup/screens/bid/customer/CustomerBidScreen.dart';
-import 'package:workup/screens/bid/serviceProvider/BidListScreenServiceProvider.dart';
-import 'package:workup/screens/bid/serviceProvider/ServiceProviderBidDetailScreen.dart';
 import 'package:workup/screens/serviceprovider_account_profile_screen.dart';
 import 'package:workup/screens/serviceprovider_homepage_screen.dart';
 import 'package:workup/screens/serviceprovider_order_confirm_screen.dart';
@@ -24,8 +20,6 @@ import 'package:workup/screens/customer_profile_screen.dart'; // <-- Import the 
 import 'package:workup/screens/customer_edit_profile_screen.dart';
 import 'package:workup/screens/customer_cart_screen.dart';
 import 'package:workup/screens/order_history_screen.dart';
-import 'package:workup/screens/serviceProvider/ServiceProviderProfile.dart';
-import 'package:workup/screens/serviceProvider/ServiceProviderDashboard.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -205,6 +199,7 @@ class MyApp extends StatelessWidget {
         //         }
         //       },
         //     ),
+
       },
       title: 'Flutter Demo',
       theme: ThemeData(
