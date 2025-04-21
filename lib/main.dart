@@ -113,15 +113,12 @@ class MyApp extends StatelessWidget {
 
         '/serviceProviderHomepageScreen': (context) =>
             const ServiceProviderHomepageScreen(),
-        '/serviceProviderAccountProfileScreen': (context) =>
-            const ServiceProviderAccountProfileScreen(),
         '/serviceProviderOrderConfirmScreen': (context) =>
             const ServiceProviderOrderConfirmScreen(),
         '/orderHistoryScreen': (context) => const OrderHistoryScreen(),
         '/customerCartScreen': (context) => const CustomerCartScreen(),
         '/customerBidScreen': (context) =>
             const CustomerBidScreen(customerId: 'cust123deepak'),
-        '/orderHistoryScreen': (context) => const OrderHistoryScreen(),
         '/bidAcceptanceScreenCustomer': (context) {
           final args = ModalRoute.of(context)!.settings.arguments
               as Map<String, dynamic>;
@@ -129,18 +126,6 @@ class MyApp extends StatelessWidget {
         },
 
         // Service Provider Routes
-        '/serviceProviderRegisterScreen': (context) =>
-            const ServiceProviderRegisterScreen(),
-        '/serviceProviderOtpScreen': (context) =>
-            const ServiceProviderOtpScreen(),
-        '/serviceProviderLoginScreen': (context) =>
-            const ServiceProviderLoginScreen(),
-        '/serviceProviderFullProfileScreen': (context) =>
-            const ServiceProviderFullProfileScreen(),
-        '/serviceProviderProfileScreen': (context) =>
-            const ServiceProviderProfileScreen(),
-        '/serviceProviderHomepageScreen': (context) =>
-            const ServiceProviderHomepageScreen(),
         '/serviceProviderAccountProfileScreen': (context) =>
             const ServiceProviderProfile(userData: {
               "_id": "67fd4c704a52a46c53b2f99b",
@@ -180,8 +165,6 @@ class MyApp extends StatelessWidget {
               "info": "Experienced electrician and appliance repair expert.",
               "category": "5a9c7dcd-99fc-4e3e-bac8-73c18a5e2c65"
             }),
-        '/serviceProviderOrderConfirmScreen': (context) =>
-            const ServiceProviderOrderConfirmScreen(),
         '/serviceProviderDashboard': (context) => ServiceProviderDashboard(),
 
         // Bidding Routes
