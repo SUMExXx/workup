@@ -7,7 +7,7 @@ import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:workup/widgets/bottom_navigation_bar.dart';
 import '../main.dart';
 
 class ServiceProviderProfileScreen extends StatefulWidget {
@@ -137,8 +137,13 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
 
   confirmClick() async {
     if (cartState.getJson().isEmpty) {
-      return;
-    }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Your cart is empty!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;    }
 
     setState(() {
       isLoading = true;
@@ -146,41 +151,74 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
 
     final orderData = {
       "data": cartState.getJson(),
-      "sp": serviceProviderData.sID
+      "sp": serviceProviderData.sID,
+      "status": "pending"
     };
 
-    // Wait for payment success
-    bool paymentSuccess = await _paymentService.openCheckout(amount: 500);
+    final requestUrl = Uri.parse('$apiUrl/customers/placeOrder');
+    try {
+      final response = await http.post(
+        requestUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(orderData),
+      );
+      if (response.statusCode == 200) {
+        // After successfully placing request, notify SP
+        await sendNotificationToSP(serviceProviderData.sID);
 
-    if (paymentSuccess) {
-      final orderUrl = Uri.parse('$apiUrl/customers/placeOrder');
-
-      try {
-        final response = await http.post(
-          orderUrl,
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(orderData),
+        setState(() {
+          isLoading = false;
+        });
+        // Show a success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Request placed successfully! Waiting for Service Provider confirmation.'),
+            duration: Duration(seconds: 3),
+          ),
         );
-
-        if (response.statusCode == 200) {
-          setState(() {
-            isLoading = false;
-          });
-          navigatorKey.currentState?.pushReplacementNamed('/homepageScreen');
-        } else {
-          print('Request failed with status: ${response.statusCode}');
-        }
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    } else {
-      // Payment failed, stop loading
+        navigatorKey.currentState?.pushReplacementNamed('/homepageScreen');
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+      }} catch (e) {
+      debugPrint(e.toString());
+    } finally {
       setState(() {
         isLoading = false;
       });
-
-      print("Payment failed. Order not placed.");
     }
+
+        // Wait for payment success
+    // bool paymentSuccess = await _paymentService.openCheckout(amount: 500);
+    //
+    // if (paymentSuccess) {
+    //   final orderUrl = Uri.parse('$apiUrl/customers/placeOrder');
+    //
+    //   try {
+    //     final response = await http.post(
+    //       orderUrl,
+    //       headers: {'Content-Type': 'application/json'},
+    //       body: jsonEncode(orderData),
+    //     );
+    //
+    //     if (response.statusCode == 200) {
+    //       setState(() {
+    //         isLoading = false;
+    //       });
+    //       navigatorKey.currentState?.pushReplacementNamed('/homepageScreen');
+    //     } else {
+    //       print('Request failed with status: ${response.statusCode}');
+    //     }
+    //   } catch (e) {
+    //     debugPrint(e.toString());
+    //   }
+    // } else {
+    //   // Payment failed, stop loading
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    //
+    //   print("Payment failed. Order not placed.");
+    // }
 
 
 // Navigator.pushNamed(
@@ -281,9 +319,7 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
       // For demonstration purposes, we'll just print a message
       // print('Content loaded successfully');
     } catch (e) {
-      // Handle exceptions and errors
-      // print('Error loading content: $e');
-      rethrow; // Rethrow the exception to let FutureBuilder handle it
+      rethrow;
     }
   }
 
@@ -318,36 +354,37 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
             )
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.groups_rounded),
-                label: AppStrings.bidding
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.search_rounded),
-                label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.assignment_rounded),
-                label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle_rounded),
-                label: AppStrings.home
-            ),
-          ],
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          selectedItemColor: AppColors.white,
-          unselectedItemColor: AppColors.tertiary,
-          backgroundColor: AppColors.primary,
-          type: BottomNavigationBarType.fixed,
-        ),
+        bottomNavigationBar: const CustomBottomNavigationBar(),
+        // BottomNavigationBar(
+        //   items: const [
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.home_rounded),
+        //       label: AppStrings.home
+        //     ),
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.groups_rounded),
+        //         label: AppStrings.bidding
+        //     ),
+        //     BottomNavigationBarItem(
+        //         icon: Icon(Icons.search_rounded),
+        //         label: AppStrings.home
+        //     ),
+        //     BottomNavigationBarItem(
+        //         icon: Icon(Icons.assignment_rounded),
+        //         label: AppStrings.home
+        //     ),
+        //     BottomNavigationBarItem(
+        //         icon: Icon(Icons.account_circle_rounded),
+        //         label: AppStrings.home
+        //     ),
+        //   ],
+        //   showSelectedLabels: false,
+        //   showUnselectedLabels: false,
+        //   selectedItemColor: AppColors.white,
+        //   unselectedItemColor: AppColors.tertiary,
+        //   backgroundColor: AppColors.primary,
+        //   type: BottomNavigationBarType.fixed,
+        // ),
         resizeToAvoidBottomInset: false,
         body: FutureBuilder(
           future: fetchData(),
@@ -666,6 +703,10 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
 
   @override
   bool get wantKeepAlive => true;
+
+Future<void> sendNotificationToSP(String sID) async{
+
+}
 }
 
 class Task{

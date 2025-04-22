@@ -1,3 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'firebase_options.dart';
+import 'services/local_notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workup/screens/customer_edit_profile_screen.dart';
@@ -23,12 +27,41 @@ import 'package:workup/screens/order_history_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling a background message: ${message.messageId}');
+}
+
 void main() async {
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Request permissions here
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  LocalNotificationService.initialize();  // ✅ ADD THIS
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // Request notification permission on iOS
+  await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  // Get the device's token
+  String? token = await messaging.getToken();
+  print('Firebase Messaging Token: $token');
+
   await requestAllPermissions();
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    if (message.notification != null) {
+      LocalNotificationService.showNotificationOnForeground(message); // ✅ ADD THIS
+      print('Message title: ${message.notification!.title}');
+      print('Message body: ${message.notification!.body}');
+      // You can show a dialog/snackbar/local notification here if you want
+    }
+  });
+
   runApp(const MyApp());
 }
 
@@ -62,8 +95,9 @@ Future<void> requestAllPermissions() async {
 }
 
 class MyApp extends StatelessWidget {
-  //final bool startAtHomepage;
+  // final bool startAtHomepage = false;
   const MyApp({super.key});
+    // , required bool startAtHomepage
 
   @override
   Widget build(BuildContext context) {
