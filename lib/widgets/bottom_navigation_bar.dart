@@ -8,11 +8,11 @@ class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key, this.currentIndex});
 
   @override
-  State<CustomBottomNavigationBar> createState() => _CustomBottomNavigationBarState();
+  State<CustomBottomNavigationBar> createState() =>
+      _CustomBottomNavigationBarState();
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-
   static int _currentIndex = 0;
 
   void _onItemTapped(int index) {
@@ -24,7 +24,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         Navigator.pushReplacementNamed(context, '/homepageScreen');
         break;
       case 1:
-        Navigator.pushReplacementNamed(context, '/homepageScreen');
+        Navigator.pushReplacementNamed(
+            context, '/customerBidScreen');
         break;
       case 2:
         Navigator.pushReplacementNamed(context, '/customerCartScreen');
@@ -51,7 +52,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           label: AppStrings.bidding,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_cart_rounded),
+          icon: Icon(Icons.search_rounded),
           label: AppStrings.home,
         ),
         BottomNavigationBarItem(
