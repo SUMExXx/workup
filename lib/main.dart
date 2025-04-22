@@ -22,9 +22,12 @@ import 'package:workup/screens/customer_registration_otp_screen.dart';
 import 'package:workup/screens/serviceprovider_fullprofile_screen.dart';
 import 'package:workup/screens/customer_profile_screen.dart'; // <-- Import the customer profile screen
 import 'package:workup/screens/customer_edit_profile_screen.dart';
-import 'package:workup/screens/customer_cart_screen.dart';
+import 'package:workup/screens/cart_screen.dart';
 import 'package:workup/screens/order_history_screen.dart';
 
+import 'package:workup/screens/cart_screen.dart';
+import 'package:workup/screens/order_confirmation_screen.dart';
+import 'package:workup/screens/review_feedback_screen.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -138,6 +141,8 @@ class MyApp extends StatelessWidget {
         '/customerProfileScreen': (context) => const CustomerProfileScreen(),
         '/customerEditProfileScreen': (context) =>
             const CustomerEditProfileScreen(),
+        '/orderConfirmationScreen': (context) => const OrderConfirmationScreen(),
+        '/cartScreen': (context) => const CartScreen(),
 
         '/serviceProviderHomepageScreen': (context) =>
             const ServiceProviderHomepageScreen(),
@@ -146,6 +151,7 @@ class MyApp extends StatelessWidget {
         '/serviceProviderOrderConfirmScreen': (context) =>
             const ServiceProviderOrderConfirmScreen(),
         '/orderHistoryScreen': (context) => const OrderHistoryScreen(),
+        '/reviewFeedbackScreen': (context) => const ReviewFeedbackScreen(),
       },
       title: 'Flutter Demo',
       theme: ThemeData(
