@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:workup/services/cart_service.dart';
 import 'package:workup/services/payment_service.dart';
@@ -7,8 +6,9 @@ import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:workup/widgets/bottom_navigation_bar.dart';
 import '../main.dart';
+import 'dart:convert';
 
 class ServiceProviderProfileScreen extends StatefulWidget {
   const ServiceProviderProfileScreen({super.key});
@@ -137,8 +137,13 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
 
   confirmClick() async {
     if (cartState.getJson().isEmpty) {
-      return;
-    }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Your cart is empty!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;    }
 
     setState(() {
       isLoading = true;
@@ -146,41 +151,74 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
 
     final orderData = {
       "data": cartState.getJson(),
-      "sp": serviceProviderData.sID
+      "sp": serviceProviderData.sID,
+      "status": "pending"
     };
 
-    // Wait for payment success
-    bool paymentSuccess = await _paymentService.openCheckout(amount: 500);
+    final requestUrl = Uri.parse('$apiUrl/customers/placeOrder');
+    try {
+      final response = await http.post(
+        requestUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(orderData),
+      );
+      if (response.statusCode == 200) {
+        // After successfully placing request, notify SP
+        await sendNotificationToSP(serviceProviderData.sID);
 
-    if (paymentSuccess) {
-      final orderUrl = Uri.parse('$apiUrl/customers/placeOrder');
-
-      try {
-        final response = await http.post(
-          orderUrl,
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(orderData),
+        setState(() {
+          isLoading = false;
+        });
+        // Show a success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Request placed successfully! Waiting for Service Provider confirmation.'),
+            duration: Duration(seconds: 3),
+          ),
         );
-
-        if (response.statusCode == 200) {
-          setState(() {
-            isLoading = false;
-          });
-          navigatorKey.currentState?.pushReplacementNamed('/homepageScreen');
-        } else {
-          print('Request failed with status: ${response.statusCode}');
-        }
-      } catch (e) {
-        debugPrint(e.toString());
-      }
-    } else {
-      // Payment failed, stop loading
+        navigatorKey.currentState?.pushReplacementNamed('/homepageScreen');
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+      }} catch (e) {
+      debugPrint(e.toString());
+    } finally {
       setState(() {
         isLoading = false;
       });
-
-      print("Payment failed. Order not placed.");
     }
+
+    // Wait for payment success
+    // bool paymentSuccess = await _paymentService.openCheckout(amount: 500);
+    //
+    // if (paymentSuccess) {
+    //   final orderUrl = Uri.parse('$apiUrl/customers/placeOrder');
+    //
+    //   try {
+    //     final response = await http.post(
+    //       orderUrl,
+    //       headers: {'Content-Type': 'application/json'},
+    //       body: jsonEncode(orderData),
+    //     );
+    //
+    //     if (response.statusCode == 200) {
+    //       setState(() {
+    //         isLoading = false;
+    //       });
+    //       navigatorKey.currentState?.pushReplacementNamed('/homepageScreen');
+    //     } else {
+    //       print('Request failed with status: ${response.statusCode}');
+    //     }
+    //   } catch (e) {
+    //     debugPrint(e.toString());
+    //   }
+    // } else {
+    //   // Payment failed, stop loading
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    //
+    //   print("Payment failed. Order not placed.");
+    // }
 
 
 // Navigator.pushNamed(
@@ -281,9 +319,7 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
       // For demonstration purposes, we'll just print a message
       // print('Content loaded successfully');
     } catch (e) {
-      // Handle exceptions and errors
-      // print('Error loading content: $e');
-      rethrow; // Rethrow the exception to let FutureBuilder handle it
+      rethrow;
     }
   }
 
@@ -318,116 +354,120 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
             )
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.groups_rounded),
-                label: AppStrings.bidding
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.search_rounded),
-                label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.assignment_rounded),
-                label: AppStrings.home
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle_rounded),
-                label: AppStrings.home
-            ),
-          ],
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          selectedItemColor: AppColors.white,
-          unselectedItemColor: AppColors.tertiary,
-          backgroundColor: AppColors.primary,
-          type: BottomNavigationBarType.fixed,
-        ),
+        bottomNavigationBar: const CustomBottomNavigationBar(),
+        // BottomNavigationBar(
+        //   items: const [
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.home_rounded),
+        //       label: AppStrings.home
+        //     ),
+        //     BottomNavigationBarItem(
+        //       icon: Icon(Icons.groups_rounded),
+        //         label: AppStrings.bidding
+        //     ),
+        //     BottomNavigationBarItem(
+        //         icon: Icon(Icons.search_rounded),
+        //         label: AppStrings.home
+        //     ),
+        //     BottomNavigationBarItem(
+        //         icon: Icon(Icons.assignment_rounded),
+        //         label: AppStrings.home
+        //     ),
+        //     BottomNavigationBarItem(
+        //         icon: Icon(Icons.account_circle_rounded),
+        //         label: AppStrings.home
+        //     ),
+        //   ],
+        //   showSelectedLabels: false,
+        //   showUnselectedLabels: false,
+        //   selectedItemColor: AppColors.white,
+        //   unselectedItemColor: AppColors.tertiary,
+        //   backgroundColor: AppColors.primary,
+        //   type: BottomNavigationBarType.fixed,
+        // ),
         resizeToAvoidBottomInset: false,
         body: FutureBuilder(
-          future: fetchData(),
-          builder: (context, snapshot){
-            if(snapshot.connectionState == ConnectionState.waiting){
-              return const Center(child: CircularProgressIndicator(
-                color: AppColors.primary,
-              ));
-            } else if(snapshot.hasError){
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else{
-              return Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            serviceProviderInfo(serviceProviderData.imgURL, serviceProviderData.sID, serviceProviderData.sName, serviceProviderData.category, serviceProviderData.newSProvider, serviceProviderData.rating, serviceProviderData.reviews, serviceProviderData.ordersCompleted, serviceProviderData.away),
-                            const SizedBox(height: 20.0),
-                            Column(
-                              children: List.generate(serviceProviderSubcategoryData.length * 2 - 1, (index) {
-                                if (index.isEven) {
-                                  int itemIndex = index ~/ 2;
-                                  return serviceProviderSubcategoryBox(key: ValueKey("widget1"),serviceProviderSubcategoryData[itemIndex].name, serviceProviderSubcategoryData[itemIndex].tasks);
-                                } else {
-                                  return const SizedBox(height: 20.0); // Spacing between items
-                                }
-                              }),
-                            ),
-                          ],
+            future: fetchData(),
+            builder: (context, snapshot){
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return const Center(child: CircularProgressIndicator(
+                  color: AppColors.primary,
+                ));
+              } else if(snapshot.hasError){
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else{
+                return Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              serviceProviderInfo(serviceProviderData.imgURL, serviceProviderData.sID, serviceProviderData.sName, serviceProviderData.category, serviceProviderData.newSProvider, serviceProviderData.rating, serviceProviderData.reviews, serviceProviderData.ordersCompleted, serviceProviderData.away),
+                              const SizedBox(height: 20.0),
+                              Column(
+                                children: List.generate(serviceProviderSubcategoryData.length * 2 - 1, (index) {
+                                  if (index.isEven) {
+                                    int itemIndex = index ~/ 2;
+                                    return serviceProviderSubcategoryBox(key: ValueKey("widget1"),serviceProviderSubcategoryData[itemIndex].name, serviceProviderSubcategoryData[itemIndex].tasks);
+                                  } else {
+                                    return const SizedBox(height: 20.0); // Spacing between items
+                                  }
+                                }),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10), // 10px padding on top
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 40, // Full width
-                        child: ElevatedButton(
-                          onPressed: () {
-                            confirmClick();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary, // Change to your desired color
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40), // 40px corner roundness
-                            ),
-                          ),
-                          child: isLoading?
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                            child: Center(
-                              child: SizedBox(
-                                width: 24, // Ensures proper circular shape
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  color: AppColors.white,
-                                  strokeWidth: 2, // Adjust thickness if needed
-                                ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10), // 10px padding on top
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 40, // Full width
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/cartScreen', arguments: {
+                                'providerName' : serviceProviderData.sName,
+                              });
+                              //confirmClick();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary, // Change to your desired color
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40), // 40px corner roundness
                               ),
                             ),
-                          )
-                          :
-                          Text(
-                            "Confirm order",
-                            style: TextStyle(color: AppColors.white), // Text color set to white
+                            child: isLoading?
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                              child: Center(
+                                child: SizedBox(
+                                  width: 24, // Ensures proper circular shape
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.white,
+                                    strokeWidth: 2, // Adjust thickness if needed
+                                  ),
+                                ),
+                              ),
+                            )
+                                :
+                            Text(
+                              "Go to cart",
+                              style: TextStyle(color: AppColors.white), // Text color set to white
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
+                    ],
+                  ),
+                );
+              }
             }
-          }
         ),
       ),
     );
@@ -515,7 +555,7 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
                       borderRadius: BorderRadius.circular(8),  // Rounded corners with radius of 12
                     ),
                     child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                       child: Row(
                         children: [
                           Text(
@@ -524,7 +564,7 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
                           ),
                           const SizedBox(width: 10,),
                           const Icon(
-                              Icons.arrow_right,
+                            Icons.arrow_right,
                             color: AppColors.white,
                           )
                         ],
@@ -666,6 +706,10 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<void> sendNotificationToSP(String sID) async{
+
+  }
 }
 
 class Task{
@@ -684,10 +728,10 @@ class Task{
   // Factory method to create a Service object from JSON
   factory Task.make(String name, double price, String taskID, String subcategoryID) {
     return Task(
-      name: name,
-      price: price,
-      taskID: taskID,
-      subcategoryID: subcategoryID
+        name: name,
+        price: price,
+        taskID: taskID,
+        subcategoryID: subcategoryID
     );
   }
 }
@@ -706,9 +750,9 @@ class Subcategory{
   // Factory method to create a Service object from JSON
   factory Subcategory.make(String name, String sID, List<Task> tasks) {
     return Subcategory(
-      name: name,
-      tasks: tasks,
-      sID: sID
+        name: name,
+        tasks: tasks,
+        sID: sID
     );
   }
 }
@@ -800,7 +844,7 @@ class _TaskBoxState extends State<TaskBox> {
 
   void increment() {
     setState(() {
-      CartState().increment(widget.subcategoryID, widget.taskID);
+      CartState().increment(widget.subcategoryID, widget.taskID, name: widget.name, price: widget.price);
       qty++;  // Increase qty
     });
   }

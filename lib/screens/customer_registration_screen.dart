@@ -132,7 +132,7 @@ class _CustomerRegistrationScreenState extends State<CustomerRegisterScreen> {
                           const SizedBox(height: 20),
                           _buildElevatedButton('Register'),
                           const SizedBox(height: 20), // Adjusted height for spacing
-                          _buildSocialMediaOptions(),
+                          // _buildSocialMediaOptions(),
                           const SizedBox(height: 20),
                           _buildRegisterRow(),
 
