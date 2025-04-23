@@ -133,7 +133,7 @@ class _ServiceProviderRegisterScreenState extends State<ServiceProviderRegisterS
                           const SizedBox(height: 20),
                           _buildElevatedButton('Register'),
                           const SizedBox(height: 20),
-                          // _buildSocialMediaOptions(),
+                          _buildSocialMediaOptions(),
                           const SizedBox(height: 20),
                           _buildRegisterRow(),
                           const SizedBox(height: 20),

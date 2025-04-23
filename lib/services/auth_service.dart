@@ -53,30 +53,19 @@ class AuthService {
       'message': null,
       'token': null
     };
-    try{
-      final response = await http.post(
-        Uri.parse('$apiUrl/customers/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(customer.toJson()),
-      );
-      // print('Login API status: ${response.statusCode}');
-      // print('Login API body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        returnData['token'] = data['token'];
-        returnData['code'] = data['code'];
-      } else if(response.statusCode == 300){
-        // Handle specific case
-      }else{
-        final errorData = jsonDecode(response.body);
-        returnData['code'] = errorData['code'] ?? 'Error';
-        returnData['message'] = errorData['message'] ?? 'Something went wrong';
-      }
-    } catch (e) {
-      print('Login Exception: $e');
-      returnData['code'] = 'Error';
-      returnData['message'] = e.toString();
+    final response = await http.post(
+      Uri.parse('$apiUrl/customers/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(customer.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      returnData['token'] = data['token'];
+      returnData['code'] = data['code'];
+    } else if(response.statusCode == 300){
+      // Handle specific case
     }
 
     return returnData;
@@ -142,28 +131,5 @@ class AuthService {
     }
 
     return false;
-  }
-
-  Future<void> updateFcmToken(String email, String? fcmToken) async {
-    try {
-      final url = Uri.parse('$apiUrl/customers/cuUpdateFCMToken');
-
-      final response = await http.put(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'fcmToken': fcmToken,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        print('FCM token updated successfully');
-      } else {
-        print('Failed to update FCM token: ${response.body}');
-      }
-    } catch (e) {
-      print('Error updating FCM token: $e');
-    }
   }
 }
