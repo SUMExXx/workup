@@ -195,7 +195,7 @@ class _ServiceProviderDashboardState extends State<ServiceProviderDashboard> {
         return Card(
           margin: EdgeInsets.all(8.0),
           child: ListTile(
-            title: Text('\$${bid.price}'), // Access price directly
+            title: Text('${bid.price}'), // Access price directly
             subtitle: Text(bid.description), // Access description directly
             trailing: Text(bid.status), // Access status directly
             onTap: () {
