@@ -165,7 +165,11 @@ class MyApp extends StatelessWidget {
               "info": "Experienced electrician and appliance repair expert.",
               "category": "5a9c7dcd-99fc-4e3e-bac8-73c18a5e2c65"
             }),
-        '/serviceProviderDashboard': (context) => ServiceProviderDashboard(),
+        '/serviceProviderDashboard': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
+          return ServiceProviderDashboard(bidId: args['bidId']);
+        },
 
         // Bidding Routes
         '/bidListScreenServiceProvider': (context) =>
