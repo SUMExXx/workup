@@ -1,7 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'firebase_options.dart';
-import 'services/local_notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workup/screens/customer_edit_profile_screen.dart';
@@ -26,51 +22,19 @@ import 'package:workup/screens/customer_registration_otp_screen.dart';
 import 'package:workup/screens/serviceprovider_fullprofile_screen.dart';
 import 'package:workup/screens/customer_profile_screen.dart'; // <-- Import the customer profile screen
 import 'package:workup/screens/customer_edit_profile_screen.dart';
-import 'package:workup/screens/cart_screen.dart';
+import 'package:workup/screens/customer_cart_screen.dart';
 import 'package:workup/screens/order_history_screen.dart';
 import 'package:workup/screens/serviceProvider/ServiceProviderProfile.dart';
 import 'package:workup/screens/serviceProvider/ServiceProviderDashboard.dart';
 
-import 'package:workup/screens/cart_screen.dart';
-import 'package:workup/screens/order_confirmation_screen.dart';
-import 'package:workup/screens/review_feedback_screen.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print('Handling a background message: ${message.messageId}');
-}
 
 void main() async {
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  LocalNotificationService.initialize();  // ✅ ADD THIS
-
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  // Request notification permission on iOS
-  await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-  // Get the device's token
-  String? token = await messaging.getToken();
-  print('Firebase Messaging Token: $token');
-
+  // Request permissions here
   await requestAllPermissions();
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Got a message whilst in the foreground!');
-    if (message.notification != null) {
-      LocalNotificationService.showNotificationOnForeground(message); // ✅ ADD THIS
-      print('Message title: ${message.notification!.title}');
-      print('Message body: ${message.notification!.body}');
-      // You can show a dialog/snackbar/local notification here if you want
-    }
-  });
-
   runApp(const MyApp());
 }
 
@@ -104,9 +68,8 @@ Future<void> requestAllPermissions() async {
 }
 
 class MyApp extends StatelessWidget {
-  // final bool startAtHomepage = false;
+  //final bool startAtHomepage;
   const MyApp({super.key});
-    // , required bool startAtHomepage
 
   @override
   Widget build(BuildContext context) {
@@ -147,15 +110,12 @@ class MyApp extends StatelessWidget {
         '/customerProfileScreen': (context) => const CustomerProfileScreen(),
         '/customerEditProfileScreen': (context) =>
             const CustomerEditProfileScreen(),
-        '/orderConfirmationScreen': (context) => const OrderConfirmationScreen(),
-        '/cartScreen': (context) => const CartScreen(),
 
         '/serviceProviderHomepageScreen': (context) =>
             const ServiceProviderHomepageScreen(),
         '/serviceProviderOrderConfirmScreen': (context) =>
             const ServiceProviderOrderConfirmScreen(),
         '/orderHistoryScreen': (context) => const OrderHistoryScreen(),
-        '/reviewFeedbackScreen': (context) => const ReviewFeedbackScreen(),
         '/customerCartScreen': (context) => const CustomerCartScreen(),
         '/customerBidScreen': (context) =>
             const CustomerBidScreen(customerId: 'cust123deepak'),

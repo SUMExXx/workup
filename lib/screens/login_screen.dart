@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:workup/models/customer_model.dart';
 import 'package:workup/utils/colors.dart';
@@ -39,19 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = _emailController.text;
     final password = _passwordController.text;
 
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email and password cannot be empty')),
-      );
-      return;
-    }
-
     final customer = Customer(email: email, password: password);
     final response = await _authService.login(customer);
-
-    // print('Login response: $response');
-
-    final fcmToken = await FirebaseMessaging.instance.getToken();
 
     switch (response['code']) {
       case 'Error':
@@ -59,21 +47,15 @@ class _LoginScreenState extends State<LoginScreen> {
         break;
       case 'InvalidEmail':
       // Statements for value2
-      print("InvalidEmail");
-
         break;
-      case 'InvalidCode':
+      case 'InvalidPassword':
       // Statements for value2
-        print("InvalidPassword");
-
         break;
       case 'Success':
         await saveType("cu");
         await saveToken(response['token']);
         await saveEmail(email);
         await savePassword(password);
-        await _authService.updateFcmToken(email, fcmToken);
-
         Navigator.pushReplacementNamed(context, '/homepageScreen');
         break;
     // Add more cases as needed
@@ -161,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             // ),
                           ),
                           const SizedBox(height: 20),
-                          _buildTextField(_emailController, 'Enter your Email'),
+                          _buildTextField(_emailController, 'Email or username'),
                           const SizedBox(height: 20),
                           _buildTextField(_passwordController, 'Password', obscureText: true),
                           const SizedBox(height: 20),

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:workup/models/service_provider_model.dart';  // Import ServiceProvider model
 import 'package:workup/utils/colors.dart';
 import 'package:workup/utils/secure_storage.dart';
 import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
 import '../services/auth_service.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+
 
 class ServiceProviderLoginScreen extends StatefulWidget {
   const ServiceProviderLoginScreen({super.key});
@@ -21,9 +18,8 @@ class _ServiceProviderLoginState extends State<ServiceProviderLoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
-  final String? apiUrl = dotenv.env['API_BASE_URL'];
 
-
+  // Register button click handler
   serviceProviderLoginButtonClick() {
     _loginServiceProvider();
   }
@@ -55,9 +51,6 @@ class _ServiceProviderLoginState extends State<ServiceProviderLoginScreen> {
         await saveToken(response['token']);
         await saveEmail(email);
         await savePassword(password);
-
-        await updateFCMToken(email);
-
         Navigator.pushReplacementNamed(
             context,
             '/serviceProviderHomepageScreen',
@@ -72,36 +65,7 @@ class _ServiceProviderLoginState extends State<ServiceProviderLoginScreen> {
     }
   }
 
-  Future<void> updateFCMToken(String email) async {
-    try {
-      String? fcmToken = await FirebaseMessaging.instance.getToken();
-
-      if (fcmToken == null) {
-        print("FCM token is null");
-        return;
-      }
-      var url = Uri.parse('$apiUrl/serviceProviders/updatefcm'); // Replace this with your backend API URL
-      var response = await http.put(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'email': email,
-          'fcmToken': fcmToken,
-        }),
-      );
-      if (response.statusCode == 200) {
-        print("FCM Token updated successfully!");
-      } else {
-        print("Failed to update FCM Token: ${response.body}");
-      }
-    } catch (e) {
-      print("Error updating FCM Token: $e");
-    }
-  }
-
-      handleBackClick() {
+  handleBackClick() {
     Navigator.pop(context);
   }
 
@@ -178,7 +142,7 @@ class _ServiceProviderLoginState extends State<ServiceProviderLoginScreen> {
                           const SizedBox(height: 20),
                           _buildElevatedButton('Login'),
                           const SizedBox(height: 20),
-                          // _buildSocialMediaOptions(),
+                          _buildSocialMediaOptions(),
                           const SizedBox(height: 20),
                           _buildRegisterRow(),
                           const SizedBox(height: 20),

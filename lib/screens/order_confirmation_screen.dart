@@ -1,21 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:workup/utils/colors.dart';
 import 'package:workup/utils/text_styles.dart';
 import 'package:workup/widgets/bottom_navigation_bar.dart';
 import 'package:workup/widgets/drawer.dart';
 
-class OrderConfirmationScreen extends StatelessWidget {
-  const OrderConfirmationScreen({super.key});
+class OrderConfirmationScreen extends StatefulWidget {
+  final String customerId;
+  final String providerId;
+  final String service;
+  final int amount;
+
+  const OrderConfirmationScreen({
+    super.key,
+    required this.customerId,
+    required this.providerId,
+    required this.service,
+    required this.amount,
+  });
+
+  @override
+  State<OrderConfirmationScreen> createState() => _OrderConfirmationScreenState();
+}
+
+class _OrderConfirmationScreenState extends State<OrderConfirmationScreen> {
+  String? orderId;
+  String? confirmedOn;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    confirmOrder(); // Trigger backend call
+  }
+
+  Future<void> confirmOrder() async {
+    final url = Uri.parse('https://your-api-url/orders/confirmOrder'); // 👈 replace with actual backend URL
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "customerId": widget.customerId,
+          "providerId": widget.providerId,
+          "service": widget.service,
+          "amount": widget.amount,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          orderId = data['orderId'];
+          confirmedOn = DateFormat('dd MMM yyyy, hh:mm a')
+              .format(DateTime.parse(data['confirmedOn']));
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to confirm order');
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> orderData =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ?? {};
-
-    final String currentTime =
-    DateFormat('dd MMM yyyy, hh:mm a').format(DateTime.now());
-
     return SafeArea(
       child: Scaffold(
         drawer: const CustomDrawer(),
@@ -27,106 +82,63 @@ class OrderConfirmationScreen extends StatelessWidget {
                 style: AppTextStyles.title.merge(AppTextStyles.textWhite)),
           ),
         ),
-        body: Padding(
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
           padding: const EdgeInsets.all(24.0),
-          child: SingleChildScrollView(   // <-- Wrap whole body with scroll to prevent any overflow
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Icon(Icons.check_circle, size: 80, color: Colors.green),
-                const SizedBox(height: 16),
-                Text(
-                  "Order Confirmed!",
-                  style: AppTextStyles.title.merge(AppTextStyles.textPrimary),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(Icons.check_circle, size: 80, color: Colors.green),
+              const SizedBox(height: 16),
+              Text(
+                "Order Confirmed!",
+                style: AppTextStyles.title.merge(AppTextStyles.textPrimary),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Your order has been placed successfully.",
+                style: AppTextStyles.textSmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              buildDetailRow("Order ID", orderId ?? "Loading..."),
+              buildDetailRow("Service", widget.service),
+              buildDetailRow("Provider", widget.providerId),
+              buildDetailRow("Total Amount", "₹${widget.amount}"),
+              buildDetailRow("Confirmed On", confirmedOn ?? "Loading..."),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () =>
+                    Navigator.pushNamed(context, '/orderHistoryScreen'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 40, vertical: 16),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  "Your order has been placed successfully.",
-                  style: AppTextStyles.textSmall,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-
-                buildDetailRow("Order ID", orderData['orderId'] ?? '-'),
-                buildMultilineDetailRow("Service", orderData['service'] ?? '-'),
-                buildDetailRow("Provider", orderData['provider'] ?? '-'),
-                buildDetailRow("Total Amount", orderData['total'] ?? '-'),
-                buildDetailRow("Confirmed On", currentTime),
-
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () => Navigator.pushNamed(context, '/orderHistoryScreen'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  ),
-                  child: const Text("View My Orders",
-                      style: TextStyle(color: Colors.white)),
-                ),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: () => Navigator.pushNamed(context, '/home'),
-                  child: const Text("Back to Home"),
-                )
-              ],
-            ),
+                child: const Text("View My Orders",
+                    style: TextStyle(color: Colors.white)),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => Navigator.pushNamed(context, '/home'),
+                child: const Text("Back to Home"),
+              )
+            ],
           ),
         ),
       ),
     );
   }
 
-  // For normal (single-line) fields
   Widget buildDetailRow(String title, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,   // <-- important for alignment
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              title,
-              style: AppTextStyles.textSmallBold,
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value,
-              style: AppTextStyles.textSmall,
-              textAlign: TextAlign.right,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // For multi-line service names
-  Widget buildMultilineDetailRow(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start, // Top align the text
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              title,
-              style: AppTextStyles.textSmallBold,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            flex: 5,
-            child: Text(
-              value,
-              style: AppTextStyles.textSmall,
-              softWrap: true,
-            ),
-          ),
+          Text(title, style: AppTextStyles.textSmallBold),
+          Text(value, style: AppTextStyles.textSmall),
         ],
       ),
     );

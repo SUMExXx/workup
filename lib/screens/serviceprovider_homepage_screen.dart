@@ -18,88 +18,9 @@ class ServiceProviderHomepageScreen extends StatefulWidget {
 
 class _ServiceProviderHomepageScreenState extends State<ServiceProviderHomepageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late List<Category> categoryData;
 
   final String? apiUrl = dotenv.env['API_BASE_URL'];
-
-  String? SPemail;  // To store email
-
-  String? sID;
-  List<dynamic> pendingOrders = [];
-
-  Future<void> loadOrders() async {
-    if (SPemail != null) {
-      final sid = sID;
-      if (sid != null) {
-        final orders = await fetchPendingOrders(sid);
-        setState(() {
-          pendingOrders = orders;
-        });
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final Map<String, dynamic>? args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    if (args != null && args.containsKey('email')) {
-      SPemail = args['email'];
-      print('Received Email in HomePage: $SPemail');
-      fetchServiceProviderDetails();
-    }
-  }
-
-  Future<void> fetchServiceProviderDetails() async {
-    try {
-      final email = await SPemail!; // You already saved email in login
-
-      final response = await http.post(
-        Uri.parse('$apiUrl/serviceprovider/getServiceProviderDetails'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-
-        setState(() {
-          sID = responseData['uuid'];  // <-- Save sID here
-        });
-        print('Fetched SP UUID: $sID');
-        await loadOrders();
-
-      } else {
-        print('Failed to fetch SP details: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching SP details: $e');
-    }
-  }
-
-  Future<List<dynamic>> fetchPendingOrders(String sID) async {
-    final url = Uri.parse('$apiUrl/serviceprovider/getPendingOrdersForSP');
-
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: '{"sid": "$sID"}',
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> orders = jsonDecode(response.body);
-      return orders;
-    } else {
-      print('Failed to fetch pending orders');
-      return [];
-    }
-  }
 
 //   String jsonString = '''[
 //     {
@@ -170,7 +91,9 @@ class _ServiceProviderHomepageScreenState extends State<ServiceProviderHomepageS
     _scaffoldKey.currentState?.openDrawer();
   }
 
-  // handleChatClick() {}
+  handleChatClick() {
+
+  }
 
   Future<void> fetchData() async {
 
@@ -189,130 +112,104 @@ class _ServiceProviderHomepageScreenState extends State<ServiceProviderHomepageS
       print('Error occurred: $e');
     }
 
-    //************************************ commenting from here
-    // try {
-    //   List<dynamic> jsonData = jsonDecode(jsonString);
-    //   categoryData = jsonData.map((item) => Category.fromJson(item)).toList();
-    //   // Simulate a network request delay
-    //   // await Future.delayed(const Duration(seconds: 3));
-    //
-    //   // Simulate fetching data
-    //   // You can replace this with actual data-fetching logic
-    //   // e.g., var response = await http.get('https://api.example.com/data');
-    //   // if (response.statusCode == 200) {
-    //   //   return jsonDecode(response.body);
-    //   // } else {
-    //   //   throw Exception('Failed to load data');
-    //   // }
-    //
-    //   // For demonstration purposes, we'll just print a message
-    //   // print('Content loaded successfully');
-    // } catch (e) {
-    //   // Handle exceptions and errors
-    //   // print('Error loading content: $e');
-    //   rethrow; // Rethrow the exception to let FutureBuilder handle it
-    // }
+    try {
+      List<dynamic> jsonData = jsonDecode(jsonString);
+      categoryData = jsonData.map((item) => Category.fromJson(item)).toList();
+      // Simulate a network request delay
+      // await Future.delayed(const Duration(seconds: 3));
+
+      // Simulate fetching data
+      // You can replace this with actual data-fetching logic
+      // e.g., var response = await http.get('https://api.example.com/data');
+      // if (response.statusCode == 200) {
+      //   return jsonDecode(response.body);
+      // } else {
+      //   throw Exception('Failed to load data');
+      // }
+
+      // For demonstration purposes, we'll just print a message
+      // print('Content loaded successfully');
+    } catch (e) {
+      // Handle exceptions and errors
+      // print('Error loading content: $e');
+      rethrow; // Rethrow the exception to let FutureBuilder handle it
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Service Requests')),
-      body: pendingOrders.isEmpty
-          ? Center(child: Text('No new service requests'))
-          : ListView.builder(
-        itemCount: pendingOrders.length,
-        itemBuilder: (context, index) {
-          final order = pendingOrders[index];
-          return Card(
-            margin: EdgeInsets.all(10),
-            child: ListTile(
-              title: Text('Request ${index + 1}'),
-              subtitle: Text('Items: ${order['items'].length}'),
-              onTap: () {
-                // TODO: Open order details or accept/reject screen
-              },
+    return SafeArea(
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          backgroundColor: AppColors.primary,
+          title: Center(
+              child: Text(
+                AppStrings.appTitle,
+                style: AppTextStyles.title.merge(AppTextStyles.textWhite),
+              )
+          ),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.menu_rounded,
+              color: AppColors.white,
             ),
-          );
-        },
+            onPressed: handleMenuClick,
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(
+                Icons.chat_rounded,
+                color: AppColors.white,
+              ),
+              onPressed: handleChatClick,
+            )
+          ],
+        ),
+        bottomNavigationBar: const SPCustomBottomNavigationBar(),
+        resizeToAvoidBottomInset: false,
+        drawer: const CustomDrawer(),
+        body: FutureBuilder(
+          future: fetchData(),
+          builder: (context, snapshot){
+            if(snapshot.connectionState == ConnectionState.waiting){
+              return const Center(child: CircularProgressIndicator(
+                color: AppColors.primary,
+              ));
+            } else if(snapshot.hasError){
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else{
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3, // Number of columns in the grid
+                            crossAxisSpacing: 10.0, // Spacing between columns
+                            mainAxisSpacing: 10.0, // Spacing between rows
+                            childAspectRatio: 1.0, // Aspect ratio of each item
+                          ),
+                          itemCount: categoryData.length,
+                          itemBuilder: (context, index) {
+                            return categoryElement(categoryData[index].imageURL, categoryData[index].text, categoryData[index].category);
+                          },
+                        ),
+                      ),
+
+                    ],
+                  ),
+                ),
+              );
+            }
+          }
+        ),
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return SafeArea(
-  //     child: Scaffold(
-  //       key: _scaffoldKey,
-  //       appBar: AppBar(
-  //         backgroundColor: AppColors.primary,
-  //         title: Center(
-  //             child: Text(
-  //               AppStrings.appTitle,
-  //               style: AppTextStyles.title.merge(AppTextStyles.textWhite),
-  //             )
-  //         ),
-  //         leading: IconButton(
-  //           icon: const Icon(
-  //             Icons.menu_rounded,
-  //             color: AppColors.white,
-  //           ),
-  //           onPressed: handleMenuClick,
-  //         ),
-  //         actions: [
-  //           // IconButton(
-  //           //   icon: const Icon(
-  //           //     Icons.chat_rounded,
-  //           //     color: AppColors.white,
-  //           //   ),
-  //           //   onPressed: handleChatClick,
-  //           // )
-  //         ],
-  //       ),
-  //       bottomNavigationBar: const SPCustomBottomNavigationBar(),
-  //       resizeToAvoidBottomInset: false,
-  //       drawer: const CustomDrawer(),
-  //       body: FutureBuilder(
-  //         future: fetchData(),
-  //         builder: (context, snapshot){
-  //           if(snapshot.connectionState == ConnectionState.waiting){
-  //             return const Center(child: CircularProgressIndicator(
-  //               color: AppColors.primary,
-  //             ));
-  //           } else if(snapshot.hasError){
-  //             return Center(child: Text('Error: ${snapshot.error}'));
-  //           } else{
-  //             return Padding(
-  //               padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
-  //               child: Center(
-  //                 child: Column(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: [
-  //                     Expanded(
-  //                       child: GridView.builder(
-  //                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  //                           crossAxisCount: 3, // Number of columns in the grid
-  //                           crossAxisSpacing: 10.0, // Spacing between columns
-  //                           mainAxisSpacing: 10.0, // Spacing between rows
-  //                           childAspectRatio: 1.0, // Aspect ratio of each item
-  //                         ),
-  //                         itemCount: categoryData.length,
-  //                         itemBuilder: (context, index) {
-  //                           return categoryElement(categoryData[index].imageURL, categoryData[index].text, categoryData[index].category);
-  //                         },
-  //                       ),
-  //                     ),
-  //
-  //                   ],
-  //                 ),
-  //               ),
-  //             );
-  //           }
-  //         }
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget categoryElement(String imageURL, String text, String category) {
     return GestureDetector(
