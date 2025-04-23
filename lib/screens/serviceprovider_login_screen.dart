@@ -53,7 +53,7 @@ class _ServiceProviderLoginState extends State<ServiceProviderLoginScreen> {
         await savePassword(password);
         Navigator.pushReplacementNamed(
             context,
-            '/serviceProviderHomepageScreen',
+            '/ordersScreen',
             arguments: {
               'email': email,
             }
