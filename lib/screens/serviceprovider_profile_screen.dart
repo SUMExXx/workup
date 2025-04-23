@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:workup/services/cart_service.dart';
 import 'package:workup/services/payment_service.dart';
 import 'package:workup/utils/colors.dart';
+import 'package:workup/utils/secure_storage.dart';
 import 'package:workup/utils/strings.dart';
 import 'package:workup/utils/text_styles.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -146,7 +147,8 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
 
     final orderData = {
       "data": cartState.getJson(),
-      "sp": serviceProviderData.sID
+      "sp": serviceProviderData.sID,
+      "email": getEmail()
     };
 
     // Wait for payment success
