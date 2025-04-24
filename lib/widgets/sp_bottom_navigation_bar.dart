@@ -23,7 +23,7 @@ class _SPCustomBottomNavigationBarState
     switch (index) {
       case 0:
         Navigator.pushReplacementNamed(
-            context, '/serviceProviderHomepageScreen');
+            context, '/ordersScreen');
         break;
       case 1:
         Navigator.pushReplacementNamed(

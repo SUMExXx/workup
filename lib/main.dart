@@ -26,6 +26,7 @@ import 'package:workup/screens/customer_cart_screen.dart';
 import 'package:workup/screens/order_history_screen.dart';
 import 'package:workup/screens/serviceProvider/ServiceProviderProfile.dart';
 import 'package:workup/screens/serviceProvider/ServiceProviderDashboard.dart';
+import 'package:workup/screens/serviceprovider_homepage_details_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -110,6 +111,7 @@ class MyApp extends StatelessWidget {
         '/customerProfileScreen': (context) => const CustomerProfileScreen(),
         '/customerEditProfileScreen': (context) =>
             const CustomerEditProfileScreen(),
+        '/ordersScreen' : (context) => const SPHomeDetails(),
 
         '/serviceProviderHomepageScreen': (context) =>
             const ServiceProviderHomepageScreen(),
