@@ -145,10 +145,12 @@ class _ServiceProviderProfileScreenState extends State<ServiceProviderProfileScr
       isLoading = true;
     });
 
+    final email = await getEmail();
+
     final orderData = {
       "data": cartState.getJson(),
       "sp": serviceProviderData.sID,
-      "email": getEmail()
+      "email": email
     };
 
     // Wait for payment success
